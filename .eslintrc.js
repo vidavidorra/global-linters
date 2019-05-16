@@ -19,5 +19,6 @@ module.exports = {
   },
   rules: {
     'no-fallthrough': 'error',
+    'sort-imports': 'warn',
   },
 };
