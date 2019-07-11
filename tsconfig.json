@@ -4,11 +4,12 @@
     "module": "commonjs",
     "lib": ["es2018"],
     "declaration": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "outDir": "dist",
+    "sourceMap": true,
     "moduleResolution": "node",
     "esModuleInterop": true
   },
   "compileOnSave": true,
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*.ts", "bin/**/*.ts"],
+  "exclude": ["node_modules"]
 }
