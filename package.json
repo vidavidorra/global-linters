@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "build": "tsc",
     "format": "prettier \"**/*.{js,jsx,vue,ts,css,less,scss,html,htm,json,md,markdown,yml,yaml}\" --write",
     "prettier": "prettier \"**/*.{js,jsx,vue,ts,css,less,scss,html,htm,json,md,markdown,yml,yaml}\"",
     "lint": "eslint --ignore-path .prettierignore --ext .ts,.tsx,.js,.jsx,.json .",
@@ -12,6 +13,9 @@
     "release:ok": "standard-version --sign --skip.bump --skip.changelog --commit-all",
     "release:publish": "git push --follow-tags",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "global-linters": "dist/bin/global-linters.js"
   },
   "repository": {
     "type": "git",
