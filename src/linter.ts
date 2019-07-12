@@ -56,7 +56,7 @@ export class Linter {
       throw new Error(`Could not find executable for '${this.name}'.`);
     }
 
-    console.log(chalk.green(`Found ${this.name} executable`));
+    console.log(chalk.green(`☯ Found ${this.name} executable`));
   }
 
   private Version(): void {
@@ -72,6 +72,6 @@ export class Linter {
     }
 
     this.version = semverResult.version;
-    console.log(chalk.green(`Found ${this.name} ${this.version}`));
+    console.log(chalk.green(`☯ Found ${this.name} ${this.version}`));
   }
 }
