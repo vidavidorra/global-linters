@@ -3,7 +3,7 @@ import commandExists from 'command-exists';
 import semver from 'semver';
 import shell from 'shelljs';
 
-class Linter {
+export class Linter {
   private name: string;
   private range: string;
   private version: string;
@@ -75,5 +75,3 @@ class Linter {
     console.log(chalk.green(`Found ${this.name} ${this.version}`));
   }
 }
-
-export default { Linter };
