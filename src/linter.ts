@@ -20,7 +20,9 @@ export class Linter {
 
   private ValidateRange(): void {
     if (this.range !== undefined && !semver.validRange(this.range)) {
-      throw new Error(`'${this.range}' is not a valid semver range.`);
+      throw new Error(
+        chalk.red(`'${this.range}' is not a valid semver range.`)
+      );
     }
   }
 
@@ -45,7 +47,9 @@ export class Linter {
     if (this.range != undefined) {
       if (!semver.satisfies(this.version, this.range)) {
         throw new Error(
-          `'${this.name} v${this.version} does not satisfy ${this.range}.`
+          chalk.red(
+            `${this.name} ${this.version} does not satisfy ${this.range}.`
+          )
         );
       }
     }
@@ -53,7 +57,7 @@ export class Linter {
 
   private Exists(): void {
     if (!commandExists.sync(this.name)) {
-      throw new Error(`Could not find executable for '${this.name}'.`);
+      throw new Error(chalk.red(`Could not find executable '${this.name}'.`));
     }
 
     console.log(chalk.green(`☯ Found ${this.name} executable`));
@@ -67,7 +71,9 @@ export class Linter {
     const semverResult = semver.coerce(versionResponse);
     if (semverResult === null) {
       throw new Error(
-        `Could not get version from ${this.name} using '${this.name} --version'.`
+        chalk.red(
+          `Could not get version from ${this.name} using '${this.name} --version'.`
+        )
       );
     }
 

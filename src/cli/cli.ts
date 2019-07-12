@@ -72,7 +72,7 @@ export class Cli {
       const files = glob.Files();
       linter.LintFiles(files);
     } catch (error) {
-      console.log(chalk.red(error), error);
+      console.log(error);
     }
   }
 }

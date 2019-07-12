@@ -23,7 +23,9 @@ export class Glob {
 
   private ValidatePattern(): void {
     if (this.pattern !== undefined && !isGlob(this.pattern)) {
-      throw new Error(`'${this.pattern}' is not a valid glob pattern.`);
+      throw new Error(
+        chalk.red(`'${this.pattern}' is not a valid glob pattern.`)
+      );
     }
 
     console.log(chalk.green(`☷ Pattern '${this.pattern}' is valid.`));
@@ -31,7 +33,9 @@ export class Glob {
 
   private ValidateIgnoreFile(): void {
     if (this.ignorePath !== undefined && !fs.existsSync(this.ignorePath)) {
-      throw new Error(`Ignore path '${this.ignorePath}' doesn't exist.`);
+      throw new Error(
+        chalk.red(`Ignore path '${this.ignorePath}' doesn't exist.`)
+      );
     }
 
     console.log(chalk.green(`☷ Ingorefile ${this.ignorePath} found.`));
