@@ -74,4 +74,25 @@ export class Linter {
     this.version = semverResult.version;
     console.log(chalk.green(`☯ Found ${this.name} ${this.version}`));
   }
+
+  public LintFile(file: string): void {
+    console.log(chalk.green(`☯ Processing ${file}`));
+    const lintOutput = shell.exec(`${this.name} ${file}`, {
+      silent: true,
+    }).stdout;
+
+    const lintResult = lintOutput
+      .split(/(\r|\n|\r\n)/)
+      .map((line): string => {
+        return `  ${line}`;
+      })
+      .join('');
+    console.log(chalk.yellow(lintResult));
+  }
+
+  public LintFiles(files: string[]): void {
+    files.forEach((file): void => {
+      this.LintFile(file);
+    });
+  }
 }

@@ -69,7 +69,8 @@ export class Cli {
     try {
       const linter = new Linter(this.args.linter, this.args.range);
       const glob = new Glob(this.args.glob, this.args['ignore-path']);
-      glob.Files();
+      const files = glob.Files();
+      linter.LintFiles(files);
     } catch (error) {
       console.log(chalk.red(error), error);
     }
