@@ -1,5 +1,6 @@
 import * as yargs from 'yargs';
 import chalk from 'chalk';
+import Linter from './linter';
 
 interface Arguments {
   linter: string;
@@ -68,6 +69,12 @@ function run(): void {
 
   console.log(chalk.blue('Arguments validated!'));
   console.log(chalk.gray(JSON.stringify(args, null, 2)));
+
+  try {
+    const linter = new Linter.Linter(args.linter, args.range);
+  } catch (error) {
+    console.log(chalk.red(error));
+  }
 }
 
 export default { run };
