@@ -46,7 +46,7 @@ export class Glob {
         .filter(this.files);
     }
 
-    console.log(chalk.green('☷ Matched files'), this.pattern);
+    console.log(chalk.green(`☷ Matched files using '${this.pattern}'`));
 
     this.files.forEach((file): void => {
       console.log(chalk.greenBright(` ☷ ${file}`));
