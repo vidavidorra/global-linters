@@ -17,6 +17,9 @@
   "bin": {
     "global-linters": "dist/bin/global-linters.js"
   },
+  "files": [
+    "dist/**/*"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vidavidorra/global-linters.git"
