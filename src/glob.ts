@@ -5,16 +5,16 @@ import ignore from 'ignore';
 import isGlob from 'is-glob';
 
 export class Glob {
+  private readonly defaultIgnoreFile = '.prettierignore';
   private pattern: string;
   private ignorePath: string;
   private files: string[];
 
   public constructor(pattern: string, ignorePath: string) {
-    const defaultIgnoreFile = '.prettierignore';
     this.pattern = pattern;
     this.ignorePath = ignorePath;
-    if (!this.ignorePath && fs.existsSync(defaultIgnoreFile)) {
-      this.ignorePath = defaultIgnoreFile;
+    if (!this.ignorePath && fs.existsSync(this.defaultIgnoreFile)) {
+      this.ignorePath = this.defaultIgnoreFile;
     }
 
     this.ValidatePattern();
@@ -57,5 +57,13 @@ export class Glob {
     });
 
     return this.files;
+  }
+
+  public Pattern(): string {
+    return this.pattern;
+  }
+
+  public IgnorePath(): string {
+    return this.ignorePath;
   }
 }
