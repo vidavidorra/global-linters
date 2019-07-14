@@ -27,8 +27,6 @@ export class Glob {
         chalk.red(`'${this.pattern}' is not a valid glob pattern.`)
       );
     }
-
-    console.log(chalk.green(`☷ Pattern '${this.pattern}' is valid.`));
   }
 
   private ValidateIgnoreFile(): void {
@@ -37,8 +35,6 @@ export class Glob {
         chalk.red(`Ignore path '${this.ignorePath}' doesn't exist.`)
       );
     }
-
-    console.log(chalk.green(`☷ Ingorefile ${this.ignorePath} found.`));
   }
 
   public Files(): string[] {
@@ -49,12 +45,6 @@ export class Glob {
         .add(fs.readFileSync(this.ignorePath).toString())
         .filter(this.files);
     }
-
-    console.log(chalk.green(`☷ Matched files using '${this.pattern}'`));
-
-    this.files.forEach((file): void => {
-      console.log(chalk.greenBright(` ☷ ${file}`));
-    });
 
     return this.files;
   }
