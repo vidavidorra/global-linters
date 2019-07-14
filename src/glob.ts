@@ -10,7 +10,7 @@ export class Glob {
   private ignorePath: string;
   private files: string[];
 
-  public constructor(pattern: string, ignorePath: string) {
+  public constructor(pattern: string, ignorePath: string = undefined) {
     this.pattern = pattern;
     this.ignorePath = ignorePath;
     if (!this.ignorePath && fs.existsSync(this.defaultIgnoreFile)) {
