@@ -7,13 +7,15 @@
   "scripts": {
     "build": "tsc",
     "format": "prettier \"**/*.{js,jsx,vue,ts,css,less,scss,html,htm,json,md,markdown,yml,yaml}\" --write",
-    "prettier": "prettier \"**/*.{js,jsx,vue,ts,css,less,scss,html,htm,json,md,markdown,yml,yaml}\"",
     "format:file": "prettier --write",
+    "prettier": "prettier \"**/*.{js,jsx,vue,ts,css,less,scss,html,htm,json,md,markdown,yml,yaml}\"",
     "lint": "eslint --ignore-path .prettierignore --ext .ts,.tsx,.js,.jsx,.json .",
+    "lint:file": "eslint --ignore-path .prettierignore --ext .ts,.tsx,.js,.jsx,.json",
     "release": "standard-version --skip.commit --skip.tag",
     "release:ok": "standard-version --sign --skip.bump --skip.changelog --commit-all",
     "release:publish": "git push --follow-tags",
-    "test": "jest"
+    "test": "jest",
+    "test:staged": "jest --passWithNoTests --findRelatedTests $(git diff --staged --name-only)"
   },
   "bin": {
     "global-linters": "dist/bin/global-linters.js"
@@ -40,8 +42,9 @@
   "lint-staged": {
     "**/*.{js,jsx,ts,json}": [
       "npm run format:file",
-      "npm run lint",
-      "git add"
+      "npm run lint:file",
+      "git add",
+      "npm run test:staged"
     ],
     "**/*.{vue,css,less,scss,html,htm,md,markdown,yml,yaml}": [
       "npm run format:file",
