@@ -9,6 +9,88 @@
 
 Linter wrappers for globally installed linters.
 
+## Table of contents
+
+- [CLI](#cli)
+- [License](#license)
+
+<a name="cli"></a>
+
+## CLI
+
+Run the CLI without any arguments to see the options. The options are also described in the table and paragraphs below.
+
+| Argument              | Usage      | Type                              | Reference                   |
+| --------------------- | ---------- | --------------------------------- | --------------------------- |
+| `linter`              | Required   | String [`hadolint`, `shellcheck`] | [details](#cli-linter)      |
+| `glob`                | Required   | String                            | [details](#cli-glob)        |
+| `--ignore-path`, `-i` | _Optional_ | String                            | [details](#cli-ignore-path) |
+| `--range`, `-r`       | _Optional_ | String                            | [details](#cli-range)       |
+| `--options`           | _Optional_ | String                            | [details](#cli-options)     |
+| `—version`, `-v`      | _Optional_ | Boolean                           |                             |
+| `—help`, `-h`         | _Optional_ | Boolean                           |                             |
+
+<a name="cli-linter"></a>
+
+## `linter`
+
+Linter to run. Currently the list below shows the supported linter. If your favourite linter is not supported, please [create a ticket](https://github.com/vidavidorra/global-linters/issues/new) to discuss adding support for it.
+
+- [hadolint](https://github.com/hadolint/hadolint) - Dockerfile Linter
+
+  > A smarter Dockerfile linter that helps you build [best practice](https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices) Docker images. The linter is parsing the Dockerfile into an AST and performs rules on top of the AST. It is standing on the shoulders of [ShellCheck](https://github.com/koalaman/shellcheck) to lint the Bash code inside `RUN` instructions.
+
+- [shellcheck](https://github.com/koalaman/shellcheck) - A shell script static analysis tool
+
+  > The goals of ShellCheck are
+  >
+  > - To point out and clarify typical beginner's syntax issues that cause a shell to give cryptic error messages.
+  > - To point out and clarify typical intermediate level semantic problems that cause a shell to behave strangely and counter-intuitively.
+  > - To point out subtle caveats, corner cases and pitfalls that may cause an advanced user's otherwise working script to fail under future circumstances.
+
+<a name="cli-glob"></a>
+
+## `glob`
+
+Glob pattern for searching files. The glob syntax of the glob module is used, so the given pattern must be according to the [syntax of node-glob](https://github.com/isaacs/node-glob#glob-primer).
+
+<a name="cli-ignore-path"></a>
+
+### `--ignore-path`, `-i`
+
+Path to a file containing patterns that describe files to ignore. By default it looks for `./.prettierignore`. The patterns in the ignore file should be according to the [.gitignore specification](http://git-scm.com/docs/gitignore).
+
+<a name="cli-range"></a>
+
+### `--range`, `-r`
+
+Version range the linter must satisfy. The range must be specified according to the [node-semver ranges specification](https://github.com/npm/node-semver#ranges) and will show an error otherwise. This option only works if the linter supports a version option, which for some linters is not included in early versions. The table below shows for which versions of each supported linter the range option is supported.
+
+| Linter     | Range option supported from version | Reference                                                                     |
+| ---------- | ----------------------------------- | ----------------------------------------------------------------------------- |
+| hadolint   | `>=1.2.0`                           | [v1.2 release notes](https://github.com/hadolint/hadolint/releases/tag/v1.2). |
+| shellcheck | `>=0.3.1`                           | Commit [4e5d32b](https://github.com/koalaman/shellcheck/commit/4e5d32b).      |
+
+<a name="cli-options"></a>
+
+### `--options`
+
+Options to pass to the linter. When you use string arguments that include dashes (`-`), those will be seen as a separate option by the shell instead of part of the string. The problem is that shells like bash tend to strip quotes. The solution for this is to wrap the string in two sets of quotes of which there are two options.
+
+1. Use double quotes inside single quotes.
+
+   ```shell
+   --options '"--hello -x=yes -v"'
+   ```
+
+2. Use escaped double quotes inside double quotes.
+
+   ```shell
+   --options "\"--hello -x=yes -v\""
+   ```
+
+<a name="license"></a>
+
 ## License
 
 This project is licensed under the [GPLv3 license](https://www.gnu.org/licenses/gpl.html).
