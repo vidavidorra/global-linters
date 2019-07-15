@@ -26,23 +26,6 @@ export class Linter {
     }
   }
 
-  /**
-   * @todo Add note in readme for usage of the range option with linter versions.
-   * Ranges from https://github.com/npm/node-semver#ranges.
-   *
-   * Version usage based on the shellcheck source files. This option was added in
-   * v0.3.1, so the version validation only works for shellcheck >=0.3.1.
-   *
-   * v0.3.1: https://github.com/koalaman/shellcheck/blob/v0.3.1/shellcheck.hs#L297
-   * v0.6.0: https://github.com/koalaman/shellcheck/blob/v0.6.0/shellcheck.hs#L418
-   *
-   * Version usage based on the hadolint source files. This option was added in
-   * v1.2.0, so the version validation only works for hadolint >=1.2.0.
-   * https://github.com/hadolint/hadolint/releases/tag/v1.2
-   *
-   * v1.2.0: https://github.com/hadolint/hadolint/blob/v1.2/app/Main.hs#L54
-   * v1.16.3: https://github.com/hadolint/hadolint/blob/v1.16.3/app/Main.hs#L121
-   */
   private SatisfiesRange(): void {
     if (this.range != undefined) {
       if (!semver.satisfies(this.version, this.range)) {
