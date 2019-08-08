@@ -1,0 +1,23 @@
+language: node_js
+node_js:
+  - '12.8.0'
+
+env:
+  global:
+    - TEST_RESULTS_DIR=$SHIPPABLE_REPO_DIR/shippable/testresults
+
+build:
+  ci:
+    - npm ci
+    - npm build
+    - mkdir -p $TEST_RESULTS_DIR
+    - JEST_JUNIT_OUTPUT="${TEST_RESULTS_DIR}/tests.xml" npm run test:ci
+
+integrations:
+  notifications:
+    - integrationName: email
+      type: email
+      recipients:
+        - '--last_committer'
+        - '--last_author'
+      sendConsoleLogs: true
