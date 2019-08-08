@@ -15,6 +15,7 @@
     "release:ok": "standard-version --sign --skip.bump --skip.changelog --commit-all",
     "release:publish": "git push --follow-tags",
     "test": "jest",
+    "test:ci": "jest --ci --reporters=default --reporters=jest-junit",
     "test:staged": "jest --passWithNoTests --findRelatedTests $(git diff --staged --name-only)"
   },
   "bin": {
@@ -74,6 +75,7 @@
     "eslint-plugin-prettier": "^3.1.0",
     "husky": "^3.0.0",
     "jest": "^24.8.0",
+    "jest-junit": "^7.0.0",
     "lint-staged": "^9.2.0",
     "prettier": "^1.18.2",
     "standard-version": "^6.0.1",
