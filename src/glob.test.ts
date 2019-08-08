@@ -51,7 +51,7 @@ describe('Glob', (): void => {
   });
 
   describe('files', (): void => {
-    test('Does not filter files if no ignore path is given and the default does not exist.', (): void => {
+    test('Are not filtered if no ignore path is given and the default does not exist.', (): void => {
       const inputFiles = [
         'test/stuff.ts',
         'test/butterfly.ts',
@@ -66,7 +66,7 @@ describe('Glob', (): void => {
       expect(g.Files()).toBe(inputFiles);
     });
 
-    test('Uses default ignorepath if files', (): void => {
+    test('Are filtered using the default ignorepath if it exists.', (): void => {
       const inputFiles = [
         'test/stuff.ts',
         'test/butterfly.ts',
@@ -81,6 +81,7 @@ describe('Glob', (): void => {
         // 'duck.js',
         'frog',
       ];
+
       mockedFs.existsSync.mockReturnValue(true);
       mockedGlob.sync.mockReturnValue(inputFiles);
       mockedFs.readFileSync.mockReturnValue(Buffer.from('**/*.js\n', 'utf8'));
