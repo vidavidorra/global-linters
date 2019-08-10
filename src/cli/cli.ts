@@ -30,7 +30,7 @@ export class Cli {
         }
       )
       .options({
-        'ignore-path': {
+        ignorePath: {
           alias: 'i',
           describe:
             'Path to a file containing patterns that describe files to ignore.',
@@ -56,7 +56,7 @@ export class Cli {
     this.args = {
       linter: args.linter as string,
       glob: args.glob as string,
-      'ignore-path': (args['ignore-path'] as string) || undefined,
+      ignorePath: (args.ignorePath as string) || undefined,
       range: (args.range as string) || undefined,
       options: (args.options as string) || undefined,
     };
@@ -68,7 +68,7 @@ export class Cli {
 
     try {
       const linter = new Linter(this.args.linter, this.args.range);
-      const glob = new Glob(this.args.glob, this.args['ignore-path']);
+      const glob = new Glob(this.args.glob, this.args.ignorePath);
       const files = glob.Files();
       linter.LintFiles(files);
     } catch (error) {
