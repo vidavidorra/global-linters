@@ -2,7 +2,7 @@ import * as yargs from 'yargs';
 import { Arguments, GlobalLinters } from '..';
 
 export class Cli {
-  public constructor(argv: string[]) {
+  public Run(argv: string[]): void {
     const args = this.Parse(argv);
     GlobalLinters(args);
   }

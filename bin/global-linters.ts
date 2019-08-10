@@ -2,4 +2,5 @@
 
 import { Cli } from '../src/cli/cli';
 
-new Cli(process.argv.splice(2));
+const cli = new Cli();
+cli.Run(process.argv.splice(2));
