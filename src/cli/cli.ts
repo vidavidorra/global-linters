@@ -1,5 +1,5 @@
 import * as yargs from 'yargs';
-import { Arguments, Glob, Linter } from '..';
+import { Arguments, GlobalLinters } from '..';
 import chalk from 'chalk';
 
 export class Cli {
@@ -9,7 +9,8 @@ export class Cli {
   public constructor(argv: string[]) {
     this.argv = argv;
     this.Parse();
-    this.GlobalLinters();
+
+    GlobalLinters(this.args);
   }
 
   private Parse(): void {
@@ -63,19 +64,5 @@ export class Cli {
       range: (args.range as string) || undefined,
       options: (args.options as string) || undefined,
     };
-  }
-
-  private GlobalLinters(): void {
-    console.log(chalk.blue('Arguments validated!'));
-    console.log(chalk.gray(JSON.stringify(this.args, null, 2)));
-
-    try {
-      const linter = new Linter(this.args.linter, this.args.range);
-      const glob = new Glob(this.args.glob, this.args.ignorePath);
-      const files = glob.Files();
-      linter.LintFiles(files);
-    } catch (error) {
-      console.log(error);
-    }
   }
 }

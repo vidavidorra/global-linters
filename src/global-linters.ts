@@ -1,9 +1,12 @@
-export interface Arguments {
-  linter: string;
-  glob: string;
-  ignorePath?: string;
-  i?: string;
-  range?: string;
-  r?: string;
-  options?: string;
+import { Arguments, Glob, Linter } from '.';
+
+export function GlobalLinters(args: Arguments): void {
+  try {
+    const linter = new Linter(args.linter, args.range);
+    const glob = new Glob(args.glob, args.ignorePath);
+    const files = glob.Files();
+    linter.LintFiles(files);
+  } catch (error) {
+    console.log(error);
+  }
 }
