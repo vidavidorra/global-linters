@@ -2,17 +2,12 @@ import * as yargs from 'yargs';
 import { Arguments, GlobalLinters } from '..';
 
 export class Cli {
-  private args: Arguments;
-  private argv: string[];
-
   public constructor(argv: string[]) {
-    this.argv = argv;
-    this.Parse();
-
-    GlobalLinters(this.args);
+    const args = this.Parse(argv);
+    GlobalLinters(args);
   }
 
-  private Parse(): void {
+  public Parse(argv: string[]): Arguments {
     const args = yargs
       .strict(true)
       .usage(
@@ -54,9 +49,9 @@ export class Cli {
           alias: 'h',
         },
       })
-      .parse(this.argv);
+      .parse(argv);
 
-    this.args = {
+    return {
       linter: args.linter as string,
       glob: args.glob as string,
       ignorePath: (args.ignorePath as string) || undefined,
