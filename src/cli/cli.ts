@@ -4,8 +4,10 @@ import chalk from 'chalk';
 
 export class Cli {
   private args: Arguments;
+  private argv: string[];
 
-  public constructor() {
+  public constructor(argv: string[]) {
+    this.argv = argv;
     this.Parse();
     this.GlobalLinters();
   }
@@ -51,7 +53,8 @@ export class Cli {
         help: {
           alias: 'h',
         },
-      }).argv;
+      })
+      .parse(this.argv);
 
     this.args = {
       linter: args.linter as string,

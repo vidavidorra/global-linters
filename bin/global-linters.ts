@@ -2,4 +2,4 @@
 
 import { Cli } from '../src/cli/cli';
 
-new Cli();
+new Cli(process.argv.splice(2));
