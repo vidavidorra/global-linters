@@ -31,7 +31,7 @@ describe('Glob', (): void => {
     test('Throws if a non-existing ignore path is given.', (): void => {
       mockedFs.existsSync.mockReturnValue(false);
       expect((): void => {
-        const g = new Glob('*', 'somerandomfile');
+        new Glob('*', 'somerandomfile');
       }).toThrow();
     });
   });
@@ -45,7 +45,7 @@ describe('Glob', (): void => {
 
     test('Throws if an invalid glob pattern is given.', (): void => {
       expect((): void => {
-        const g = new Glob('a');
+        new Glob('a');
       }).toThrow();
     });
   });
