@@ -1,6 +1,5 @@
 import * as yargs from 'yargs';
 import { Arguments, GlobalLinters } from '..';
-import chalk from 'chalk';
 
 export class Cli {
   private args: Arguments;
