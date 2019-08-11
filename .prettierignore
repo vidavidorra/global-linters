@@ -1,7 +1,12 @@
-node_modules/*
+# Git
 .git/*
 
-LICENSE.md
+# Node
+node_modules/*
+coverage/*
 
 # TypeScript outDir
 dist/*
+
+# Licensing
+LICENSE.md
