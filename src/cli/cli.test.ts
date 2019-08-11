@@ -1,3 +1,5 @@
+jest.mock('../global-linters');
+import * as GlobalLinters from '../global-linters';
 import { Cli } from './cli';
 
 describe('Cli', (): void => {
@@ -131,5 +133,18 @@ describe('Cli', (): void => {
       expect(mockConsoleError).not.toHaveBeenCalled();
       expect(mockExit).not.toHaveBeenCalled();
     });
+  });
+
+  test('Runs GlobalLinters.', (): void => {
+    const mockGlobalLinters = jest
+      .spyOn(GlobalLinters, 'GlobalLinters')
+      .mockImplementation((): void => {});
+
+    const cli = new Cli();
+    cli.Run(['hadolint', '*']);
+
+    expect(mockGlobalLinters).toBeCalledTimes(1);
+    expect(mockConsoleError).not.toHaveBeenCalled();
+    expect(mockExit).not.toHaveBeenCalled();
   });
 });
