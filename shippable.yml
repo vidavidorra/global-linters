@@ -9,7 +9,7 @@ env:
 build:
   ci:
     - npm ci
-    - npm build
+    - npm run build
     - mkdir -p $TEST_RESULTS_DIR
     - JEST_JUNIT_OUTPUT="${TEST_RESULTS_DIR}/tests.xml" npm run test:ci
 
