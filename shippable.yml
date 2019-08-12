@@ -4,6 +4,7 @@ node_js:
 
 env:
   global:
+    - secure: IvZX+RxijqQxbkwxMX07FzWFfRmFKM+N4s5UF0b2inM59cVVjKmQZdVUR6Qqea7j28ga70p8sEdLnDXuaHsv9zYC6LyJA30mEoXH8zmvtSNuEbIbGKQkgbHKz8hwnSPwQB0jG5p+MBy9Gg+DsRiqxKyfys4bEjK2G7mb1WSCBR9E4cpdX/WWmj3nEyaoa8iot41ln/U6IU0jF5XSv21B4upr/LWC6vsKtxHARi9/UxKoiq/PgUW1Ym/Uaom7HlTrkUXIG5ng6oyqiB0Z8Rg67q87udEAN3aev5N/orOF6/cGucubfXOSYSc/qHLFiN5cg5IdxrTb6DEOcibbZ2E5XQ==
     - TEST_RESULTS_DIR="$SHIPPABLE_REPO_DIR/shippable/testresults"
     - CODE_COVERAGE_DIR=${SHIPPABLE_REPO_DIR}/shippable/codecoverage
 
@@ -16,6 +17,10 @@ build:
     - >
       JEST_JUNIT_OUTPUT="${TEST_RESULTS_DIR}/tests.xml" npm run test:ci
       -- --coverageDirectory "${CODE_COVERAGE_DIR}"
+    # Setting the TRAVIS_BUILD_DIR required due to these two issues.
+    # - https://github.com/codecov/codecov-node/issues/142
+    # - https://github.com/Shippable/support/issues/4906
+    - TRAVIS_BUILD_DIR="${SHIPPABLE_BUILD_DIR}" npm run ci:codecov
 
 integrations:
   notifications:
