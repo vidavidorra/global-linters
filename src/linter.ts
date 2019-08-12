@@ -3,12 +3,14 @@ import commandExists from 'command-exists';
 import semver from 'semver';
 import shell from 'shelljs';
 
+export type LinterNames = 'hadolint' | 'shellcheck';
+
 export class Linter {
-  private name: string;
+  private name: LinterNames;
   private range: string;
   private version: string;
 
-  public constructor(name: string, range: string) {
+  public constructor(name: LinterNames, range: string) {
     this.name = name;
     this.range = range;
     this.ValidateRange();
