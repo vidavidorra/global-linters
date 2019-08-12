@@ -1,6 +1,7 @@
-jest.mock('../global-linters');
 import * as GlobalLinters from '../global-linters';
 import { Cli } from './cli';
+
+jest.mock('../global-linters');
 
 describe('Cli', (): void => {
   let mockConsoleLog;
