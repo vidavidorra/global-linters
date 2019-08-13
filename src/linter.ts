@@ -63,6 +63,14 @@ export class Linter {
     this.version = semverResult.version;
   }
 
+  public Name(): LinterNames {
+    return this.name;
+  }
+
+  public Range(): string {
+    return this.range;
+  }
+
   public LintFile(file: string): void {
     console.log(chalk.green(`☯ Processing ${file}`));
     const lintOutput = shell.exec(`${this.name} ${file}`, {
