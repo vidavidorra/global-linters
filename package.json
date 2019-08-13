@@ -57,7 +57,7 @@
   "standard-version": {
     "scripts": {
       "prerelease": "if [[ \"$(git rev-parse --abbrev-ref HEAD)\" != \"master\" ]]; then exit -1; fi",
-      "precommit": "git add package.json package-lock.json"
+      "precommit": "git add package.json package-lock.json CHANGELOG.md"
     }
   },
   "devDependencies": {
