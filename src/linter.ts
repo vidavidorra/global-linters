@@ -44,8 +44,6 @@ export class Linter {
     if (!commandExists.sync(this.name)) {
       throw new Error(chalk.red(`Could not find executable '${this.name}'.`));
     }
-
-    console.log(chalk.green(`☯ Found ${this.name} executable`));
   }
 
   private Version(): void {
@@ -63,7 +61,6 @@ export class Linter {
     }
 
     this.version = semverResult.version;
-    console.log(chalk.green(`☯ Found ${this.name} ${this.version}`));
   }
 
   public LintFile(file: string): void {
