@@ -12,6 +12,7 @@ Linter wrappers for globally installed linters.
 ## Table of contents
 
 - [CLI](#cli)
+- [API](#api)
 - [License](#license)
 
 <a name="cli"></a>
@@ -88,6 +89,12 @@ Options to pass to the linter. When you use string arguments that include dashes
    ```shell
    --options "\"--hello -x=yes -v\""
    ```
+
+<a name="api"></a>
+
+## API
+
+These docs will be added in the first (full) release 1.0.0.
 
 <a name="license"></a>
 
