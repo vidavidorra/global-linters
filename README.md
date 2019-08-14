@@ -20,6 +20,7 @@ Linter wrappers for globally installed linters.
 | <a href="https://codecov.io/gh/vidavidorra/global-linters"><img alt="Code coverage" src="https://img.shields.io/codecov/c/github/vidavidorra/global-linters/master?style=flat-square"></a>                          | Code coverage             | Codecov              |
 | <a href="https://app.shippable.com/github/vidavidorra/global-linters/dashboard"><img alt="Shippable build status" src="https://img.shields.io/shippable/5ce5ad4ebbceea0007a23c7c/master.svg?style=flat-square"></a> | CI status: Build and test | Shippable            |
 | <a href="https://travis-ci.org/vidavidorra/global-linters"><img alt="Travis CI build status" src="https://img.shields.io/travis/vidavidorra/global-linters?branch=master&style=flat-square"></a>                    | CI status: Commit style   | Travis CI            |
+| <a href="https://www.npmjs.com/package/global-linters"><img alt="npm version" src="https://img.shields.io/npm/v/global-linters.svg?style=flat-square"></a>                                                          | npm package version       | npm                  |
 
 <a name="cli"></a>
 
