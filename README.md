@@ -1,19 +1,25 @@
 # global-linters
 
-<p align="center">
-  <a href="https://github.com/prettier/prettier#readme">
-    <img alt="code style: prettier" src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square"></a>
-  <a href="https://conventionalcommits.org">
-    <img alt="Conventional Commits: 1.0.0" src="https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg?style=flat-square"></a>
-</p>
-
 Linter wrappers for globally installed linters.
 
 ## Table of contents
 
+- [Badges](#badges)
 - [CLI](#cli)
 - [API](#api)
 - [License](#license)
+
+<a name="badges"></a>
+
+## Badges
+
+| Badge                                                                                                                                                                                                               | Description               | Service              |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- | -------------------- |
+| <a href="https://github.com/prettier/prettier#readme"><img alt="code style" src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square"></a>                                                | Code style                | Prettier             |
+| <a href="https://conventionalcommits.org"><img alt="Conventional Commits: 1.0.0" src="https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg?style=flat-square"></a>                                  | Commit style              | Conventional Commits |
+| <a href="https://codecov.io/gh/vidavidorra/global-linters"><img alt="Code coverage" src="https://img.shields.io/codecov/c/github/vidavidorra/global-linters/master?style=flat-square"></a>                          | Code coverage             | Codecov              |
+| <a href="https://app.shippable.com/github/vidavidorra/global-linters/dashboard"><img alt="Shippable build status" src="https://img.shields.io/shippable/5ce5ad4ebbceea0007a23c7c/master.svg?style=flat-square"></a> | CI status: Build and test | Shippable            |
+| <a href="https://travis-ci.org/vidavidorra/global-linters"><img alt="Travis CI build status" src="https://img.shields.io/travis/vidavidorra/global-linters?branch=master&style=flat-square"></a>                    | CI status: Commit style   | Travis CI            |
 
 <a name="cli"></a>
 
