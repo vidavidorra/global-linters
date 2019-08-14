@@ -12,8 +12,7 @@
     "prettier": "prettier \"**/*.{js,jsx,vue,ts,css,less,scss,html,htm,json,md,markdown,yml,yaml}\"",
     "lint": "eslint --ignore-path .prettierignore --ext .ts,.tsx,.js,.jsx,.json .",
     "lint:file": "eslint --ignore-path .prettierignore --ext .ts,.tsx,.js,.jsx,.json",
-    "release": "standard-version --skip.commit --skip.tag",
-    "release:ok": "standard-version --sign --skip.bump --skip.changelog --commit-all",
+    "release": "standard-version --sign",
     "release:publish": "git push --follow-tags",
     "test": "jest",
     "test:ci": "jest --ci --reporters=default --reporters=jest-junit --coverage --coverageReporters=text --coverageReporters=cobertura",
@@ -57,7 +56,7 @@
   "standard-version": {
     "scripts": {
       "prerelease": "if [[ \"$(git rev-parse --abbrev-ref HEAD)\" != \"master\" ]]; then exit -1; fi",
-      "precommit": "git add package.json package-lock.json CHANGELOG.md"
+      "postchangelog": "npm run format:file CHANGELOG.md"
     }
   },
   "devDependencies": {
