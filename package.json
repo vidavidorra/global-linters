@@ -13,6 +13,7 @@
     "lint": "eslint --ignore-path .prettierignore --ext .ts,.tsx,.js,.jsx,.json .",
     "lint:file": "eslint --ignore-path .prettierignore --ext .ts,.tsx,.js,.jsx,.json",
     "release": "standard-version --sign",
+    "release:npm": "npm run build & npm publish",
     "release:publish": "git push --follow-tags",
     "test": "jest",
     "test:ci": "jest --ci --reporters=default --reporters=jest-junit --coverage --coverageReporters=text --coverageReporters=cobertura",
