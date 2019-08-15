@@ -23,7 +23,7 @@
     "global-linters": "dist/bin/global-linters.js"
   },
   "files": [
-    "dist/**/*"
+    "dist"
   ],
   "repository": {
     "type": "git",
