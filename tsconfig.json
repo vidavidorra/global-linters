@@ -5,7 +5,6 @@
     "lib": ["es2018"],
     "declaration": true,
     "outDir": "dist",
-    "sourceMap": true,
     "moduleResolution": "node",
     "esModuleInterop": true
   },
