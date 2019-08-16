@@ -11,7 +11,7 @@ describe('Linter', (): void => {
       mockCommandExists = jest
         .spyOn(commandExists, 'sync')
         .mockImplementation((): boolean => {
-          return true;
+          return false;
         });
     });
 
