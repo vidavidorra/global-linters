@@ -27,7 +27,7 @@ describe('Linter', (): void => {
     });
   });
 
-  describe('With exixting linter.', (): void => {
+  describe.skip('With existing linter.', (): void => {
     let mockCommandExists;
     beforeEach((): void => {
       mockCommandExists = jest
@@ -41,7 +41,7 @@ describe('Linter', (): void => {
       mockCommandExists.mockRestore();
     });
 
-    test.skip('Accepts a valid linter name.', (): void => {
+    test('Accepts a valid linter name.', (): void => {
       /**
        * Mock `shell.exec` to return
        * 'ShellCheck - shell script analysis tool\n' +
@@ -54,7 +54,7 @@ describe('Linter', (): void => {
       }).not.toThrow();
     });
 
-    test.skip('Accepts a valid range.', (): void => {
+    test('Accepts a valid range.', (): void => {
       /**
        * Mock `shell.exec` to return
        * 'ShellCheck - shell script analysis tool\n' +
