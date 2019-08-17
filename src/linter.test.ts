@@ -23,7 +23,7 @@ describe('Linter', (): void => {
       expect((): void => {
         const linter = new Linter(defaultLinterName, defaultLinterRange);
         expect(linter.Name() === defaultLinterName);
-      }).toThrow();
+      }).toThrow(/could not find executable/i);
     });
   });
 
@@ -35,14 +35,6 @@ describe('Linter', (): void => {
         .mockImplementation((): boolean => {
           return true;
         });
-
-      const ms =
-        'ShellCheck - shell script analysis tool\n' +
-        'version: 1.1.1\n' +
-        'license: GNU General Public License, version 3\n' +
-        'website: https://www.shellcheck.net';
-
-      console.log(ms);
     });
 
     afterEach((): void => {
@@ -78,7 +70,7 @@ describe('Linter', (): void => {
     test('Throws if range is not satified.', (): void => {
       expect((): void => {
         new Linter(defaultLinterName, '>=99.0.0');
-      }).toThrow();
+      }).toThrow(/does not satisfy/i);
     });
   });
 });

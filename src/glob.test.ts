@@ -32,7 +32,7 @@ describe('Glob', (): void => {
       mockedFs.existsSync.mockReturnValue(false);
       expect((): void => {
         new Glob('*', 'somerandomfile');
-      }).toThrow();
+      }).toThrow(/ignore path .* doesn't exist/i);
     });
   });
 
@@ -46,7 +46,7 @@ describe('Glob', (): void => {
     test('Throws if an invalid glob pattern is given.', (): void => {
       expect((): void => {
         new Glob('a');
-      }).toThrow();
+      }).toThrow(/is not a valid glob pattern/i);
     });
   });
 
