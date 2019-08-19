@@ -22,7 +22,6 @@ describe('Linter', (): void => {
     test('Trows if the passed linter name does not exist.', (): void => {
       expect((): void => {
         const linter = new Linter(defaultLinterName, defaultLinterRange);
-        expect(linter.Name() === defaultLinterName);
       }).toThrow(/could not find executable/i);
     });
   });
