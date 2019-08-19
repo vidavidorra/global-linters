@@ -1,74 +1,57 @@
+import { Linters } from '.';
 import chalk from 'chalk';
 import commandExists from 'command-exists';
 import semver from 'semver';
 import shell from 'shelljs';
 
-export type LinterNames = 'hadolint' | 'shellcheck';
-
 export class Linter {
-  private name: LinterNames;
-  private range: string;
+  private name: string;
   private version: string;
 
-  public constructor(name: LinterNames, range: string) {
+  public constructor(name: string, range: string) {
+    if (Linters[name] === undefined) {
+      throw new Error(chalk.red(`Linter '${name}' is not supported.`));
+    }
+
     this.name = name;
-    this.range = range;
-    this.ValidateRange();
+    this.ValidateExists();
+    this.GetVersion();
 
-    this.Exists();
-    this.Version();
-    this.SatisfiesRange();
-  }
-
-  private ValidateRange(): void {
-    if (this.range !== undefined && !semver.validRange(this.range)) {
+    if (range !== undefined && !this.SatisfiesRange(range)) {
       throw new Error(
-        chalk.red(`'${this.range}' is not a valid semver range.`)
+        chalk.red(`${this.name} ${this.version} does not satisfy ${range}.`)
       );
     }
   }
 
-  private SatisfiesRange(): void {
-    if (this.range != undefined) {
-      if (!semver.satisfies(this.version, this.range)) {
-        throw new Error(
-          chalk.red(
-            `${this.name} ${this.version} does not satisfy ${this.range}.`
-          )
-        );
-      }
+  private SatisfiesRange(range: string): boolean {
+    if (!semver.validRange(range)) {
+      throw new Error(chalk.red(`'${range}' is not a valid semver range.`));
     }
+
+    return semver.satisfies(this.version, range);
   }
 
-  private Exists(): void {
+  private ValidateExists(): void {
     if (!commandExists.sync(this.name)) {
       throw new Error(chalk.red(`Could not find executable '${this.name}'.`));
     }
   }
 
-  private Version(): void {
-    const versionResponse = shell.exec(`${this.name} --version`, {
+  private GetVersion(): void {
+    const command = `${this.name} ${Linters[this.name].versionOption}`;
+    const versionResponse = shell.exec(command, {
       silent: true,
     }).stdout;
 
     const semverResult = semver.coerce(versionResponse);
     if (semverResult === null) {
       throw new Error(
-        chalk.red(
-          `Could not get version from ${this.name} using '${this.name} --version'.`
-        )
+        chalk.red(`Could not get version from ${this.name} using '${command}'.`)
       );
     }
 
     this.version = semverResult.version;
-  }
-
-  public Name(): LinterNames {
-    return this.name;
-  }
-
-  public Range(): string {
-    return this.range;
   }
 
   public LintFile(file: string): void {
