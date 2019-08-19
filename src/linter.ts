@@ -4,6 +4,15 @@ import commandExists from 'command-exists';
 import semver from 'semver';
 import shell from 'shelljs';
 
+interface Result {
+  line: number;
+  code: string;
+  message: string;
+  column: number;
+  file: string;
+  level: string;
+}
+
 export class Linter {
   private name: string;
   private version: string;
@@ -54,19 +63,60 @@ export class Linter {
     this.version = semverResult.version;
   }
 
-  public LintFile(file: string): void {
+  private SupportsJsonFormat(): boolean {
+    if (
+      Linters[this.name].jsonFormat !== undefined &&
+      Linters[this.name].jsonFormat.sinceVersion === undefined
+    ) {
+      throw new Error(
+        chalk.red("Option 'jsonFormat.sinceVersion' is not configured.")
+      );
+    }
+
+    return (
+      Linters[this.name].jsonFormat !== undefined &&
+      this.SatisfiesRange(Linters[this.name].jsonFormat.sinceVersion)
+    );
+  }
+
+  private PrintJsonResults(results: Result[]): void {
+    results.forEach((result): void => {
+      const outputSections = [
+        chalk.dim(`${result.line}:${result.column}`),
+        chalk.yellow(`${result.level}`),
+        result.message,
+        chalk.dim(result.code),
+      ];
+
+      console.log('  ' + outputSections.join('  '));
+    });
+  }
+
+  private LintFile(file: string): void {
     console.log(chalk.green(`☯ Processing ${file}`));
-    const lintOutput = shell.exec(`${this.name} ${file}`, {
+    const supportsJsonFormat = this.SupportsJsonFormat();
+
+    let command = `${this.name} ${file}`;
+    if (supportsJsonFormat) {
+      command += ` ${Linters[this.name].jsonFormat.option}`;
+    }
+
+    const lintOutput = shell.exec(command, {
       silent: true,
     }).stdout;
 
-    const lintResult = lintOutput
-      .split(/(\r|\n|\r\n)/)
-      .map((line): string => {
-        return `  ${line}`;
-      })
-      .join('');
-    console.log(chalk.yellow(lintResult));
+    console.log(chalk.underline(file));
+    if (supportsJsonFormat) {
+      this.PrintJsonResults(JSON.parse(lintOutput));
+    } else {
+      const lintResult = lintOutput
+        .split(/(\r|\n|\r\n)/)
+        .map((line): string => {
+          return `  ${line}`;
+        })
+        .join('');
+      console.log(chalk.yellow(lintResult));
+    }
   }
 
   public LintFiles(files: string[]): void {
