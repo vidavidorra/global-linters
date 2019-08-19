@@ -11,6 +11,7 @@ env:
 build:
   ci:
     - npm ci
+    - npm run lint
     - npm run build
     - mkdir -p "${TEST_RESULTS_DIR}"
     - mkdir -p "${CODE_COVERAGE_DIR}"
