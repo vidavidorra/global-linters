@@ -3,6 +3,7 @@ import fs from 'fs';
 import glob from 'glob';
 import ignore from 'ignore';
 import isGlob from 'is-glob';
+import path from 'path';
 
 export class Glob {
   private readonly defaultIgnoreFile = '.prettierignore';
@@ -45,6 +46,11 @@ export class Glob {
         .add(fs.readFileSync(this.ignorePath).toString())
         .filter(this.files);
     }
+
+    const prefix = process.cwd();
+    this.files = this.files.map((file): string => {
+      return path.join(prefix, file);
+    });
 
     return this.files;
   }

@@ -1,6 +1,7 @@
 import { Glob } from './glob';
 import fs from 'fs';
 import glob from 'glob';
+import path from 'path';
 
 jest.mock('fs');
 const mockedFs = fs as jest.Mocked<typeof fs>;
@@ -51,39 +52,36 @@ describe('Glob', (): void => {
   });
 
   describe('files', (): void => {
+    const pathPrefix = process.cwd();
+    const defaultInputFiles = [
+      'test/stuff.ts',
+      'test/butterfly.ts',
+      'cat.ts',
+      'duck.js',
+      'frog',
+    ];
+    const defaultInputFilesWithPrefix = defaultInputFiles.map(
+      (file): string => {
+        return path.join(pathPrefix, file);
+      }
+    );
+
     test('Are not filtered if no ignore path is given and the default does not exist.', (): void => {
-      const inputFiles = [
-        'test/stuff.ts',
-        'test/butterfly.ts',
-        'cat.ts',
-        'duck.js',
-        'frog',
-      ];
       mockedFs.existsSync.mockReturnValue(false);
-      mockedGlob.sync.mockReturnValue(inputFiles);
+      mockedGlob.sync.mockReturnValue(defaultInputFiles);
 
       const g = new Glob('*');
-      expect(g.Files()).toBe(inputFiles);
+      console.log(defaultInputFiles, defaultInputFilesWithPrefix);
+      expect(g.Files()).toStrictEqual(defaultInputFilesWithPrefix);
     });
 
     test('Are filtered using the default ignorepath if it exists.', (): void => {
-      const inputFiles = [
-        'test/stuff.ts',
-        'test/butterfly.ts',
-        'cat.ts',
-        'duck.js',
-        'frog',
-      ];
-      const expectedFiles = [
-        'test/stuff.ts',
-        'test/butterfly.ts',
-        'cat.ts',
-        // 'duck.js',
-        'frog',
-      ];
+      const expectedFiles = defaultInputFilesWithPrefix.filter((e): boolean => {
+        return !e.endsWith('.js');
+      });
 
       mockedFs.existsSync.mockReturnValue(true);
-      mockedGlob.sync.mockReturnValue(inputFiles);
+      mockedGlob.sync.mockReturnValue(defaultInputFiles);
       mockedFs.readFileSync.mockReturnValue(Buffer.from('**/*.js\n', 'utf8'));
 
       const g = new Glob('*', '.ignorefile');
