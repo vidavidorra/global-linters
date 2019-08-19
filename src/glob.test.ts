@@ -71,7 +71,6 @@ describe('Glob', (): void => {
       mockedGlob.sync.mockReturnValue(defaultInputFiles);
 
       const g = new Glob('*');
-      console.log(defaultInputFiles, defaultInputFilesWithPrefix);
       expect(g.Files()).toStrictEqual(defaultInputFilesWithPrefix);
     });
 
