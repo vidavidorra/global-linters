@@ -19,9 +19,15 @@ describe('Linter', (): void => {
       mockCommandExists.mockRestore();
     });
 
+    test('Trows if the passed linter name is not supported.', (): void => {
+      expect((): void => {
+        new Linter('abccba', defaultLinterRange);
+      }).toThrow(/linter .* is not supported/i);
+    });
+
     test('Trows if the passed linter name does not exist.', (): void => {
       expect((): void => {
-        const linter = new Linter(defaultLinterName, defaultLinterRange);
+        new Linter(defaultLinterName, defaultLinterRange);
       }).toThrow(/could not find executable/i);
     });
   });
