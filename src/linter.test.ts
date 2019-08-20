@@ -22,13 +22,13 @@ describe('Linter', (): void => {
       mockCommandExists.mockRestore();
     });
 
-    test('Trows if the passed linter name is not supported.', (): void => {
+    test('Trows if the linter name is not supported.', (): void => {
       expect((): void => {
         new Linter('abccba', defaultLinterRange);
       }).toThrow(/linter .* is not supported/i);
     });
 
-    test('Trows if the passed linter name does not exist.', (): void => {
+    test('Trows if the linter name does not exist.', (): void => {
       expect((): void => {
         new Linter(defaultLinterName, defaultLinterRange);
       }).toThrow(/could not find executable/i);
@@ -68,13 +68,35 @@ describe('Linter', (): void => {
       }).not.toThrow();
     });
 
+    test('Throws if no version could be coerced.', (): void => {
+      mockShellExec = jest.spyOn(ShellExec, 'ShellExec').mockImplementationOnce(
+        (): ShellExec.ShellExecResult => {
+          return {
+            code: 0,
+            stdout: 'Good luck finding a version in here!\n',
+            stderr: null,
+          };
+        }
+      );
+
+      expect((): void => {
+        new Linter(defaultLinterName, defaultLinterRange);
+      }).toThrow(/could find version/i);
+    });
+
     test('Accepts a valid range.', (): void => {
       expect((): void => {
         new Linter(defaultLinterName, defaultLinterRange);
       }).not.toThrow();
     });
 
-    test('Throws if range is not satified.', (): void => {
+    test('Throws if the range is invalid.', (): void => {
+      expect((): void => {
+        new Linter(defaultLinterName, 'this_is_no range');
+      }).toThrow(/is not a valid semver range/i);
+    });
+
+    test('Throws if the range is not satified.', (): void => {
       expect((): void => {
         new Linter(defaultLinterName, '>=99.0.0');
       }).toThrow(/does not satisfy/i);
