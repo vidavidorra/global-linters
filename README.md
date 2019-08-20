@@ -35,7 +35,7 @@ Run the CLI without any arguments to see the options. The options are also descr
 | `--ignore-path`, `-i` | _Optional_ | String                            | [details](#cli-ignore-path) |
 | `--range`, `-r`       | _Optional_ | String                            | [details](#cli-range)       |
 | `--options`           | _Optional_ | String                            | [details](#cli-options)     |
-| `—version`, `-v`      | _Optional_ | Boolean                           |                             |
+| `—version`, `-v`      | _Optional_ | Boolean                           | [details](#cli-version)     |
 | `—help`, `-h`         | _Optional_ | Boolean                           |                             |
 
 <a name="cli-linter"></a>
@@ -83,7 +83,7 @@ Version range the linter must satisfy. The range must be specified according to 
 
 ### `--options`
 
-Options to pass to the linter. When you use string arguments that include dashes (`-`), those will be seen as a separate option by the shell instead of part of the string. The problem is that shells like bash tend to strip quotes. The solution for this is to wrap the string in two sets of quotes of which there are two options.
+Options to pass to the linter. When using string arguments that include dashes (`-`), those will be seen as a separate option by the shell instead of part of the string. The problem is that shells like bash tend to strip quotes. The solution for this is to wrap the string in two sets of quotes of which there are two options.
 
 1. Use double quotes inside single quotes.
 
@@ -96,6 +96,12 @@ Options to pass to the linter. When you use string arguments that include dashes
    ```shell
    --options "\"--hello -x=yes -v\""
    ```
+
+<a name="cli-version"></a>
+
+### `--version`, `-v`
+
+Display **only** the version number and exit the process.
 
 <a name="api"></a>
 
