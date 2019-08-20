@@ -1,8 +1,8 @@
 import { Linters } from '.';
+import { ShellExec } from '.';
 import chalk from 'chalk';
 import commandExists from 'command-exists';
 import semver from 'semver';
-import shell from 'shelljs';
 
 interface Result {
   line: number;
@@ -49,14 +49,12 @@ export class Linter {
 
   private GetVersion(): void {
     const command = `${this.name} ${Linters[this.name].versionOption}`;
-    const versionResponse = shell.exec(command, {
-      silent: true,
-    }).stdout;
+    const shellResult = ShellExec(command, { silent: true });
 
-    const semverResult = semver.coerce(versionResponse);
+    const semverResult = semver.coerce(shellResult.stdout);
     if (semverResult === null) {
       throw new Error(
-        chalk.red(`Could not get version from ${this.name} using '${command}'.`)
+        chalk.red(`Could find version in output of '${command}'.`)
       );
     }
 
@@ -101,15 +99,13 @@ export class Linter {
       command += ` ${Linters[this.name].jsonFormat.option}`;
     }
 
-    const lintOutput = shell.exec(command, {
-      silent: true,
-    }).stdout;
+    const shellResult = ShellExec(command, { silent: true });
 
     console.log(chalk.underline(file));
     if (supportsJsonFormat) {
-      this.PrintJsonResults(JSON.parse(lintOutput));
+      this.PrintJsonResults(JSON.parse(shellResult.stdout));
     } else {
-      const lintResult = lintOutput
+      const lintResult = shellResult.stdout
         .split(/(\r|\n|\r\n)/)
         .map((line): string => {
           return `  ${line}`;
