@@ -58,10 +58,7 @@ export class Linter {
       );
     }
 
-    return (
-      Linters[this.name].jsonFormat !== undefined &&
-      this.SatisfiesRange(Linters[this.name].jsonFormat.sinceVersion)
-    );
+    return this.SatisfiesRange(Linters[this.name].jsonFormat.sinceVersion);
   }
 
   private SatisfiesRange(range: string): boolean {
