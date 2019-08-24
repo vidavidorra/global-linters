@@ -33,6 +33,22 @@ export class Linter {
     }
   }
 
+  public SupportsJsonFormat(): boolean {
+    if (
+      Linters[this.name].jsonFormat !== undefined &&
+      Linters[this.name].jsonFormat.sinceVersion === undefined
+    ) {
+      throw new Error(
+        chalk.red("Option 'jsonFormat.sinceVersion' is not configured.")
+      );
+    }
+
+    return (
+      Linters[this.name].jsonFormat !== undefined &&
+      this.SatisfiesRange(Linters[this.name].jsonFormat.sinceVersion)
+    );
+  }
+
   private SatisfiesRange(range: string): boolean {
     if (!semver.validRange(range)) {
       throw new Error(chalk.red(`'${range}' is not a valid semver range.`));
@@ -61,22 +77,6 @@ export class Linter {
     this.version = semverResult.version;
   }
 
-  private SupportsJsonFormat(): boolean {
-    if (
-      Linters[this.name].jsonFormat !== undefined &&
-      Linters[this.name].jsonFormat.sinceVersion === undefined
-    ) {
-      throw new Error(
-        chalk.red("Option 'jsonFormat.sinceVersion' is not configured.")
-      );
-    }
-
-    return (
-      Linters[this.name].jsonFormat !== undefined &&
-      this.SatisfiesRange(Linters[this.name].jsonFormat.sinceVersion)
-    );
-  }
-
   private PrintJsonResults(results: Result[]): void {
     results.forEach((result): void => {
       const outputSections = [
@@ -90,34 +90,29 @@ export class Linter {
     });
   }
 
-  private LintFile(file: string): void {
-    console.log(chalk.green(`☯ Processing ${file}`));
-    const supportsJsonFormat = this.SupportsJsonFormat();
-
-    let command = `${this.name} ${file}`;
-    if (supportsJsonFormat) {
+  public LintFiles(files: string[]): void {
+    let command = `${this.name}`;
+    if (this.SupportsJsonFormat()) {
       command += ` ${Linters[this.name].jsonFormat.option}`;
     }
 
-    const shellResult = ShellExec(command, { silent: true });
-
-    console.log(chalk.underline(file));
-    if (supportsJsonFormat) {
-      this.PrintJsonResults(JSON.parse(shellResult.stdout));
-    } else {
-      const lintResult = shellResult.stdout
-        .split(/(\r|\n|\r\n)/)
-        .map((line): string => {
-          return `  ${line}`;
-        })
-        .join('');
-      console.log(chalk.yellow(lintResult));
-    }
-  }
-
-  public LintFiles(files: string[]): void {
     files.forEach((file): void => {
-      this.LintFile(file);
+      const shellResult = ShellExec(`${command} ${file}`, { silent: true });
+
+      const jsonShellResult = JSON.parse(shellResult.stdout);
+
+      console.log(chalk.underline(file));
+      if (this.SupportsJsonFormat()) {
+        this.PrintJsonResults(jsonShellResult);
+      } else {
+        const lintResult = shellResult.stdout
+          .split(/(\r|\n|\r\n)/)
+          .map((line): string => {
+            return `  ${line}`;
+          })
+          .join('');
+        console.log(chalk.yellow(lintResult));
+      }
     });
   }
 }
