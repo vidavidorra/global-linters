@@ -7,6 +7,8 @@ describe('Cli', (): void => {
   let mockConsoleLog;
   let mockConsoleError;
   let mockExit;
+  const defaultLinter = 'hadolint';
+  const defaultGlob = '*';
 
   beforeEach((): void => {
     mockConsoleLog = jest
@@ -46,7 +48,7 @@ describe('Cli', (): void => {
 
     test('If the positional glob argument is not given.', (): void => {
       const cli = new Cli();
-      cli.Parse(['hadolint']);
+      cli.Parse([defaultLinter]);
 
       expect(mockConsoleError).toHaveBeenCalled();
       expect(mockExit).toHaveBeenCalledTimes(1);
@@ -55,7 +57,7 @@ describe('Cli', (): void => {
 
     test('If the positional linter argument is not in choices.', (): void => {
       const cli = new Cli();
-      cli.Parse(['abcdef', '*']);
+      cli.Parse(['abcdef', defaultGlob]);
 
       expect(mockConsoleError).toHaveBeenCalled();
       expect(mockExit).toHaveBeenCalledTimes(1);
@@ -87,7 +89,7 @@ describe('Cli', (): void => {
   describe('Accepts valid arguments.', (): void => {
     let cliArguments = [];
     beforeEach((): void => {
-      cliArguments = ['hadolint', '*'];
+      cliArguments = [defaultLinter, defaultGlob];
     });
 
     afterEach((): void => {
@@ -142,7 +144,7 @@ describe('Cli', (): void => {
       .mockImplementation((): void => {});
 
     const cli = new Cli();
-    cli.Run(['hadolint', '*']);
+    cli.Run([defaultLinter, defaultGlob]);
 
     expect(mockGlobalLinters).toBeCalledTimes(1);
     expect(mockConsoleError).not.toHaveBeenCalled();
