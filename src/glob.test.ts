@@ -9,14 +9,14 @@ jest.mock('glob');
 const mockedGlob = glob as jest.Mocked<typeof glob>;
 
 describe('Glob', (): void => {
-  describe('ignore path', (): void => {
-    test('Uses the default ignore path if none is given and the default path exists.', (): void => {
+  describe('Ignore path', (): void => {
+    test('Uses the default if none is given and the default exists.', (): void => {
       mockedFs.existsSync.mockReturnValue(true);
       const g = new Glob('*');
       expect(g.IgnorePath()).toBe('.prettierignore');
     });
 
-    test('Does not use a ignore path if none is given and the default path does not exist.', (): void => {
+    test('Is not used if none is given and the default does not exist.', (): void => {
       mockedFs.existsSync.mockReturnValue(false);
       const g = new Glob('*');
       expect(g.IgnorePath()).toBeUndefined();
@@ -29,7 +29,7 @@ describe('Glob', (): void => {
       expect(g.IgnorePath()).toBe(ignoreFile);
     });
 
-    test('Throws if a non-existing ignore path is given.', (): void => {
+    test('Throws if the given ignore path is non-existing.', (): void => {
       mockedFs.existsSync.mockReturnValue(false);
       expect((): void => {
         new Glob('*', 'somerandomfile');
@@ -37,11 +37,12 @@ describe('Glob', (): void => {
     });
   });
 
-  describe('pattern', (): void => {
+  describe('Pattern', (): void => {
     test('Validates a valid glob pattern.', (): void => {
-      const pattern = '**/*.ts';
-      const g = new Glob(pattern);
-      expect(g.Pattern()).toBe(pattern);
+      expect((): void => {
+        const pattern = '**/*.ts';
+        const g = new Glob(pattern);
+      }).not.toThrow();
     });
 
     test('Throws if an invalid glob pattern is given.', (): void => {
@@ -51,7 +52,7 @@ describe('Glob', (): void => {
     });
   });
 
-  describe('files', (): void => {
+  describe('Files', (): void => {
     const pathPrefix = process.cwd();
     const defaultInputFiles = [
       'test/stuff.ts',
@@ -66,7 +67,7 @@ describe('Glob', (): void => {
       }
     );
 
-    test('Are not filtered if no ignore path is given and the default does not exist.', (): void => {
+    test('Are not filtered if no ignore path is given and the default path does not exist.', (): void => {
       mockedFs.existsSync.mockReturnValue(false);
       mockedGlob.sync.mockReturnValue(defaultInputFiles);
 

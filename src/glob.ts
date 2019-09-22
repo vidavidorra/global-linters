@@ -55,10 +55,6 @@ export class Glob {
     return this.files;
   }
 
-  public Pattern(): string {
-    return this.pattern;
-  }
-
   public IgnorePath(): string {
     return this.ignorePath;
   }
