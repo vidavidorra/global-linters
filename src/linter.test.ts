@@ -8,24 +8,24 @@ describe('Linter', (): void => {
   const defaultLinterName = 'hadolint';
   const defaultLinterRange = '>1.0.0';
 
-  describe('With non-exixting linter.', (): void => {
+  test('Trows if the linter name is not supported.', (): void => {
+    expect((): void => {
+      new Linter('abccba', defaultLinterRange);
+    }).toThrow(/linter .* is not supported/i);
+  });
+
+  describe('Non-exixting linter.', (): void => {
     let mockCommandExists;
     beforeEach((): void => {
       mockCommandExists = jest
         .spyOn(commandExists, 'sync')
-        .mockImplementation((): boolean => {
+        .mockImplementationOnce((): boolean => {
           return false;
         });
     });
 
     afterEach((): void => {
       mockCommandExists.mockRestore();
-    });
-
-    test('Trows if the linter name is not supported.', (): void => {
-      expect((): void => {
-        new Linter('abccba', defaultLinterRange);
-      }).toThrow(/linter .* is not supported/i);
     });
 
     test('Trows if the linter name does not exist.', (): void => {
@@ -35,24 +35,20 @@ describe('Linter', (): void => {
     });
   });
 
-  describe('With existing linter.', (): void => {
+  describe('Existing linter.', (): void => {
     let mockCommandExists;
     let mockShellExec;
+
     beforeEach((): void => {
       mockCommandExists = jest
         .spyOn(commandExists, 'sync')
-        .mockImplementation((): boolean => {
+        .mockImplementationOnce((): boolean => {
           return true;
         });
 
-      mockShellExec = jest.spyOn(ShellExec, 'ShellExec').mockImplementation(
+      mockShellExec = jest.spyOn(ShellExec, 'ShellExec').mockImplementationOnce(
         (): ShellExec.ShellExecResult => {
-          const stdout =
-            'ShellCheck - shell script analysis tool\n' +
-            'version: 1.1.1\n' +
-            'license: GNU General Public License, version 3\n' +
-            'website: https://www.shellcheck.net';
-          return { code: 0, stdout, stderr: null };
+          return { code: 0, stdout: 'version: 1.1.1\n', stderr: null };
         }
       );
     });
@@ -69,13 +65,10 @@ describe('Linter', (): void => {
     });
 
     test('Throws if no version could be coerced.', (): void => {
+      mockShellExec.mockRestore();
       mockShellExec = jest.spyOn(ShellExec, 'ShellExec').mockImplementationOnce(
         (): ShellExec.ShellExecResult => {
-          return {
-            code: 0,
-            stdout: 'Good luck finding a version in here!\n',
-            stderr: null,
-          };
+          return { code: 0, stdout: 'no version here!\n', stderr: null };
         }
       );
 
