@@ -23,8 +23,7 @@ describe('Cli', (): void => {
      * Ignore the following line because the mock implementation for
      * `process.exit` does not compy with the standard exit type of
      * `(code?: number) => never`. That is fine in this case since the program
-     * shouldn't actually exit but just let the tests detect that it would
-     * have.
+     * shouldn't actually exit but just let the tests detect that it would have.
      */
     // @ts-ignore
     mockExit = jest.spyOn(process, 'exit').mockImplementation((): void => {});
@@ -46,14 +45,17 @@ describe('Cli', (): void => {
       expect(mockExit).not.toHaveBeenCalledWith(0);
     });
 
-    test('If the positional glob argument is not given.', (): void => {
-      const cli = new Cli();
-      cli.Parse([defaultLinter]);
+    test.each([defaultLinter, defaultGlob])(
+      'If only the positional `%s` argument is given.',
+      (args): void => {
+        const cli = new Cli();
+        cli.Parse([args]);
 
-      expect(mockConsoleError).toHaveBeenCalled();
-      expect(mockExit).toHaveBeenCalledTimes(1);
-      expect(mockExit).not.toHaveBeenCalledWith(0);
-    });
+        expect(mockConsoleError).toHaveBeenCalled();
+        expect(mockExit).toHaveBeenCalledTimes(1);
+        expect(mockExit).not.toHaveBeenCalledWith(0);
+      }
+    );
 
     test('If the positional linter argument is not in choices.', (): void => {
       const cli = new Cli();
@@ -70,13 +72,7 @@ describe('Cli', (): void => {
       'If the `%s` arguments is given.',
       (args): void => {
         const cli = new Cli();
-        let cliAruments = [];
-        if (Array.isArray(args)) {
-          cliAruments = args;
-        } else {
-          cliAruments.push(args);
-        }
-        cli.Parse(cliAruments);
+        cli.Parse([args]);
 
         expect(mockConsoleLog).toHaveBeenCalled();
         expect(mockConsoleError).not.toHaveBeenCalled();
