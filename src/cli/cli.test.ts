@@ -68,6 +68,15 @@ describe('Cli', (): void => {
   });
 
   describe('Exits with success code and message.', (): void => {
+    let cliArguments = [];
+    beforeEach((): void => {
+      cliArguments = [defaultLinter, defaultGlob];
+    });
+
+    afterEach((): void => {
+      cliArguments = [];
+    });
+
     test.each(['--help', '-h', '--version', '-v'])(
       'If the `%s` arguments is given.',
       (args): void => {
@@ -80,17 +89,6 @@ describe('Cli', (): void => {
         expect(mockExit).toHaveBeenCalledWith(0);
       }
     );
-  });
-
-  describe('Accepts valid arguments.', (): void => {
-    let cliArguments = [];
-    beforeEach((): void => {
-      cliArguments = [defaultLinter, defaultGlob];
-    });
-
-    afterEach((): void => {
-      cliArguments = [];
-    });
 
     test('If only the positonal arguments are given.', (): void => {
       const cli = new Cli();
