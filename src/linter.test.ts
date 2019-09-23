@@ -1,5 +1,6 @@
 import * as ShellExec from './helpers/shell-exec';
 import { Linter } from './linter';
+import { Linters } from './linters';
 import commandExists from 'command-exists';
 
 jest.mock('./helpers/shell-exec');
@@ -28,7 +29,7 @@ describe('Linter', (): void => {
       mockCommandExists.mockRestore();
     });
 
-    test('Trows if the linter name does not exist.', (): void => {
+    test('Throws if the linter does not exist.', (): void => {
       expect((): void => {
         new Linter(defaultLinterName, defaultLinterRange);
       }).toThrow(/could not find executable/i);
@@ -38,6 +39,42 @@ describe('Linter', (): void => {
   describe('Existing linter.', (): void => {
     let mockCommandExists;
     let mockShellExec;
+    let mockConsoleLog;
+    const mockedLinterName = 'mockedLinter';
+    const results = [
+      {
+        line: 11,
+        code: 'RULE#123',
+        message: "Don't do that there",
+        column: 1,
+        file: '/home/thing/ubuntu1804.DockerFile',
+        level: 'warning',
+      },
+      {
+        line: 11,
+        code: 'CD',
+        message: 'Delete that before this.',
+        column: 1,
+        file: '/home/thing/ubuntu1804.DockerFile',
+        level: 'info',
+      },
+      {
+        line: 21,
+        code: 123,
+        message: 'Do this`',
+        column: 12,
+        file: '/home/thing/ubuntu1804.DockerFile',
+        level: 'unknown_thing',
+      },
+      {
+        line: 30,
+        code: 'DD4566',
+        message: 'This is not okay.',
+        column: 1,
+        file: '/home/thing/ubuntu1804.DockerFile',
+        level: 'error',
+      },
+    ];
 
     beforeEach((): void => {
       mockCommandExists = jest
@@ -51,11 +88,25 @@ describe('Linter', (): void => {
           return { code: 0, stdout: 'version: 1.1.1\n', stderr: null };
         }
       );
+
+      mockConsoleLog = jest
+        .spyOn(console, 'log')
+        .mockImplementation((): void => {});
+
+      Linters[mockedLinterName] = {
+        versionOption: '--version',
+        jsonFormat: {
+          option: '--format=json',
+          sinceVersion: '>=0.4.0',
+        },
+      };
     });
 
     afterEach((): void => {
       mockCommandExists.mockRestore();
       mockShellExec.mockRestore();
+      mockConsoleLog.mockRestore();
+      delete Linters[mockedLinterName];
     });
 
     test('Accepts a valid linter name.', (): void => {
@@ -93,6 +144,76 @@ describe('Linter', (): void => {
       expect((): void => {
         new Linter(defaultLinterName, '>=99.0.0');
       }).toThrow(/does not satisfy/i);
+    });
+
+    test('Throws when an expected Linters option is not configured.', (): void => {
+      Linters[mockedLinterName] = {
+        versionOption: '--version',
+        jsonFormat: {
+          option: '--format=json',
+          sinceVersionUnknown: '>=99.4.0',
+        },
+      };
+
+      expect((): void => {
+        const l = new Linter(mockedLinterName, defaultLinterRange);
+        l.LintFiles(['uno.x', 'dos.y']);
+      }).toThrow(/option .* is not configured/i);
+    });
+
+    test('Runs linter with unformatted linter output if JSON not supported.', (): void => {
+      Linters[mockedLinterName] = {
+        versionOption: '--version',
+        jsonFormat: {
+          option: '--format=json',
+          sinceVersion: '>=99.4.0',
+        },
+      };
+
+      mockShellExec = jest
+        .spyOn(ShellExec, 'ShellExec')
+        .mockImplementationOnce(
+          (): ShellExec.ShellExecResult => {
+            const stdout = JSON.stringify(results);
+            return { code: 0, stdout, stderr: null };
+          }
+        )
+        .mockImplementationOnce(
+          (): ShellExec.ShellExecResult => {
+            return { code: 0, stdout: null, stderr: null };
+          }
+        );
+
+      expect((): void => {
+        const l = new Linter(mockedLinterName, defaultLinterRange);
+        l.LintFiles(['this_one.ext', 'other.ts']);
+      }).not.toThrow();
+
+      const re = new RegExp(`.*${JSON.stringify(results)}.*`);
+      expect(global.console.log).toHaveBeenCalledWith(
+        expect.stringMatching(re)
+      );
+    });
+
+    test('Runs linter with formatted JSON linter output if supported.', (): void => {
+      mockShellExec = jest
+        .spyOn(ShellExec, 'ShellExec')
+        .mockImplementationOnce(
+          (): ShellExec.ShellExecResult => {
+            const stdout = JSON.stringify(results);
+            return { code: 0, stdout, stderr: null };
+          }
+        )
+        .mockImplementationOnce(
+          (): ShellExec.ShellExecResult => {
+            return { code: 0, stdout: null, stderr: null };
+          }
+        );
+
+      expect((): void => {
+        const l = new Linter(mockedLinterName, defaultLinterRange);
+        l.LintFiles(['this_one.ext', 'other.ts']);
+      }).not.toThrow();
     });
   });
 });
