@@ -1,3 +1,4 @@
+import { GLError } from './helpers';
 import { Linters } from '.';
 import { ShellExec } from '.';
 import chalk from 'chalk';
@@ -34,7 +35,7 @@ export class Linter {
 
   public constructor(name: string, range: string) {
     if (Linters[name] === undefined) {
-      throw new Error(chalk.red(`Linter '${name}' is not supported.`));
+      throw new GLError(`Linter '${name}' is not supported.`);
     }
 
     this.name = name;
@@ -42,8 +43,8 @@ export class Linter {
     this.GetVersion();
 
     if (range !== undefined && !this.SatisfiesRange(range)) {
-      throw new Error(
-        chalk.red(`${this.name} ${this.version} does not satisfy ${range}.`)
+      throw new GLError(
+        `${this.name} ${this.version} does not satisfy ${range}.`
       );
     }
   }
@@ -53,9 +54,7 @@ export class Linter {
       Linters[this.name].jsonFormat !== undefined &&
       Linters[this.name].jsonFormat.sinceVersion === undefined
     ) {
-      throw new Error(
-        chalk.red("Option 'jsonFormat.sinceVersion' is not configured.")
-      );
+      throw new GLError("Option 'jsonFormat.sinceVersion' is not configured.");
     }
 
     return this.SatisfiesRange(Linters[this.name].jsonFormat.sinceVersion);
@@ -63,7 +62,7 @@ export class Linter {
 
   private SatisfiesRange(range: string): boolean {
     if (!semver.validRange(range)) {
-      throw new Error(chalk.red(`'${range}' is not a valid semver range.`));
+      throw new GLError(`'${range}' is not a valid semver range.`);
     }
 
     return semver.satisfies(this.version, range);
@@ -71,7 +70,7 @@ export class Linter {
 
   private ValidateExists(): void {
     if (!commandExists.sync(this.name)) {
-      throw new Error(chalk.red(`Could not find executable '${this.name}'.`));
+      throw new GLError(`Could not find executable '${this.name}'.`);
     }
   }
 
@@ -81,9 +80,7 @@ export class Linter {
 
     const semverResult = semver.coerce(shellResult.stdout);
     if (semverResult === null) {
-      throw new Error(
-        chalk.red(`Could find version in output of '${command}'.`)
-      );
+      throw new GLError(`Could find version in output of '${command}'.`);
     }
 
     this.version = semverResult.version;

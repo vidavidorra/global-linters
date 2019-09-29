@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import { GLError } from './helpers';
 import fs from 'fs';
 import glob from 'glob';
 import ignore from 'ignore';
@@ -24,17 +24,13 @@ export class Glob {
 
   private ValidatePattern(): void {
     if (this.pattern !== undefined && !isGlob(this.pattern)) {
-      throw new Error(
-        chalk.red(`'${this.pattern}' is not a valid glob pattern.`)
-      );
+      throw new GLError(`'${this.pattern}' is not a valid glob pattern.`);
     }
   }
 
   private ValidateIgnoreFile(): void {
     if (this.ignorePath !== undefined && !fs.existsSync(this.ignorePath)) {
-      throw new Error(
-        chalk.red(`Ignore path '${this.ignorePath}' doesn't exist.`)
-      );
+      throw new GLError(`Ignore path '${this.ignorePath}' doesn't exist.`);
     }
   }
 
