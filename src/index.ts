@@ -1,3 +1,4 @@
+export * from './cli';
 export * from './glob';
 export * from './global-linters';
 export * from './helpers';
