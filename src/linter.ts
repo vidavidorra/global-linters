@@ -1,16 +1,7 @@
-import { GLError, Linters, ShellExec } from '.';
+import { GLError, LintResult, Linters, ResultSummary, ShellExec } from '.';
 import chalk from 'chalk';
 import commandExists from 'command-exists';
 import semver from 'semver';
-
-interface Result {
-  line: number;
-  code: string;
-  message: string;
-  column: number;
-  file: string;
-  level: string;
-}
 
 interface ResultLengths {
   line: number;
@@ -18,13 +9,6 @@ interface ResultLengths {
   message: number;
   column: number;
   level: number;
-}
-
-interface ResultCount {
-  error: number;
-  warning: number;
-  info: number;
-  other: number;
 }
 
 export class Linter {
@@ -84,7 +68,7 @@ export class Linter {
     this.version = semverResult.version;
   }
 
-  private GetMaxLengths(results: Result[]): ResultLengths {
+  private GetMaxLengths(results: LintResult[]): ResultLengths {
     let lengths: ResultLengths = {
       code: 0,
       message: 0,
@@ -120,14 +104,16 @@ export class Linter {
     return count === 1 ? word : `${word}s`;
   }
 
-  private PrintJsonResults(results: Result[]): ResultCount {
+  private PrintJsonResults(results: LintResult[]): ResultSummary {
     const lengths = this.GetMaxLengths(results);
 
-    let resultCount: ResultCount = {
-      error: 0,
-      warning: 0,
-      info: 0,
-      other: 0,
+    let summary: ResultSummary = {
+      count: {
+        error: 0,
+        warning: 0,
+        info: 0,
+        other: 0,
+      },
     };
 
     results.forEach((result): void => {
@@ -135,19 +121,19 @@ export class Linter {
       switch (result.level) {
         case 'error':
           levelColour = 'red';
-          resultCount.error++;
+          summary.count.error++;
           break;
         case 'warning':
           levelColour = 'yellow';
-          resultCount.warning++;
+          summary.count.warning++;
           break;
         case 'info':
           levelColour = 'white';
-          resultCount.info++;
+          summary.count.info++;
           break;
         default:
           levelColour = 'yellow';
-          resultCount.other++;
+          summary.count.other++;
           break;
       }
 
@@ -169,15 +155,17 @@ export class Linter {
     });
     console.log('');
 
-    return resultCount;
+    return summary;
   }
 
   public LintFiles(files: string[]): void {
-    let resultCount: ResultCount = {
-      error: 0,
-      warning: 0,
-      info: 0,
-      other: 0,
+    let summary: ResultSummary = {
+      count: {
+        error: 0,
+        warning: 0,
+        info: 0,
+        other: 0,
+      },
     };
 
     let command = `${this.name}`;
@@ -199,11 +187,11 @@ export class Linter {
 
       console.log(chalk.underline(file));
       if (this.SupportsJsonFormat()) {
-        const count = this.PrintJsonResults(jsonShellResult);
-        resultCount.error += count.error;
-        resultCount.warning += count.warning;
-        resultCount.info += count.info;
-        resultCount.other += count.other;
+        const jsonSummary = this.PrintJsonResults(jsonShellResult);
+        summary.count.error += jsonSummary.count.error;
+        summary.count.warning += jsonSummary.count.warning;
+        summary.count.info += jsonSummary.count.info;
+        summary.count.other += jsonSummary.count.other;
       } else {
         const lintResult = shellResult.stdout
           .split(/(\r|\n|\r\n)/)
@@ -215,16 +203,16 @@ export class Linter {
       }
     });
 
-    const total = resultCount.error + resultCount.warning;
+    const total = summary.count.error + summary.count.warning;
     if (total > 0) {
       console.log(
         chalk['yellow'].bold(
           [
             `✗ ${total} ${this.Pluralise('problem', total)}`,
-            ` (${resultCount.error} `,
-            this.Pluralise('error', resultCount.error),
-            `, ${resultCount.warning} `,
-            this.Pluralise('warning', resultCount.warning),
+            ` (${summary.count.error} `,
+            this.Pluralise('error', summary.count.error),
+            `, ${summary.count.warning} `,
+            this.Pluralise('warning', summary.count.warning),
             ')\n',
           ].join('')
         )
