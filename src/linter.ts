@@ -1,15 +1,7 @@
-import { GLError, LintResult, Linters, ResultSummary, ShellExec } from '.';
+import { GLError, LintResult, Linters, Result, ShellExec } from '.';
 import chalk from 'chalk';
 import commandExists from 'command-exists';
 import semver from 'semver';
-
-interface ResultLengths {
-  line: number;
-  code: number;
-  message: number;
-  column: number;
-  level: number;
-}
 
 export class Linter {
   private name: string;
@@ -68,103 +60,49 @@ export class Linter {
     this.version = semverResult.version;
   }
 
-  private GetMaxLengths(results: LintResult[]): ResultLengths {
-    let lengths: ResultLengths = {
-      code: 0,
-      message: 0,
-      line: 0,
-      column: 0,
-      level: 0,
-    };
+  private parseJsonResult(
+    lintResults: LintResult[],
+    file: string,
+    result: Result
+  ): void {
+    lintResults.forEach((lintResult): void => {
+      result.results.push({
+        message: lintResult.message,
+        file,
+        line: lintResult.line,
+        column: lintResult.column,
+        level: lintResult.level,
+        code: lintResult.code,
+      });
 
-    results.forEach((result): void => {
-      if (result.code.length > lengths.code) {
-        lengths.code = result.code.length;
-      }
-      if (result.message.length > lengths.message) {
-        lengths.message = result.message.length;
-      }
-      const lineString = result.line.toString(10);
-      if (lineString.length > lengths.line) {
-        lengths.line = lineString.length;
-      }
-      const columnString = result.column.toString(10);
-      if (columnString.length > lengths.column) {
-        lengths.column = columnString.length;
-      }
-      if (result.level.length > lengths.level) {
-        lengths.level = result.level.length;
-      }
-    });
-
-    return lengths;
-  }
-
-  private Pluralise(word: string, count: number): string {
-    return count === 1 ? word : `${word}s`;
-  }
-
-  private PrintJsonResults(results: LintResult[]): ResultSummary {
-    const lengths = this.GetMaxLengths(results);
-
-    let summary: ResultSummary = {
-      count: {
-        error: 0,
-        warning: 0,
-        info: 0,
-        other: 0,
-      },
-    };
-
-    results.forEach((result): void => {
-      let levelColour;
-      switch (result.level) {
+      switch (lintResult.level) {
         case 'error':
-          levelColour = 'red';
-          summary.count.error++;
+          result.summary.count.error++;
           break;
         case 'warning':
-          levelColour = 'yellow';
-          summary.count.warning++;
+          result.summary.count.warning++;
           break;
         case 'info':
-          levelColour = 'white';
-          summary.count.info++;
+          result.summary.count.info++;
           break;
         default:
-          levelColour = 'yellow';
-          summary.count.other++;
+          result.summary.count.other++;
           break;
       }
-
-      console.log(
-        [
-          '',
-          chalk.dim(
-            `${result.line
-              .toString(10)
-              .padStart(lengths.line)}:${result.column
-              .toString(10)
-              .padEnd(lengths.column)}`
-          ),
-          chalk[levelColour](`${result.level.padEnd(lengths.level)}`),
-          result.message.padEnd(lengths.message),
-          chalk.dim(result.code),
-        ].join('  ')
-      );
     });
-    console.log('');
-
-    return summary;
   }
 
-  public LintFiles(files: string[]): void {
-    let summary: ResultSummary = {
-      count: {
-        error: 0,
-        warning: 0,
-        info: 0,
-        other: 0,
+  public LintFiles(files: string[]): Result {
+    let result: Result = {
+      type: this.SupportsJsonFormat() ? 'JSON' : 'plain-text',
+      results: [],
+      summary: {
+        count: {
+          error: 0,
+          warning: 0,
+          info: 0,
+          other: 0,
+        },
       },
     };
 
@@ -176,47 +114,23 @@ export class Linter {
     files.forEach((file): void => {
       const shellResult = ShellExec(`${command} ${file}`, { silent: true });
 
-      const jsonShellResult = JSON.parse(shellResult.stdout);
-      if (
-        !shellResult.stdout ||
-        jsonShellResult === undefined ||
-        jsonShellResult.length === 0
-      ) {
+      if (!shellResult.stdout) {
         return;
       }
 
-      console.log(chalk.underline(file));
       if (this.SupportsJsonFormat()) {
-        const jsonSummary = this.PrintJsonResults(jsonShellResult);
-        summary.count.error += jsonSummary.count.error;
-        summary.count.warning += jsonSummary.count.warning;
-        summary.count.info += jsonSummary.count.info;
-        summary.count.other += jsonSummary.count.other;
+        const jsonShellResult = JSON.parse(shellResult.stdout);
+        this.parseJsonResult(jsonShellResult, file, result);
       } else {
-        const lintResult = shellResult.stdout
-          .split(/(\r|\n|\r\n)/)
-          .map((line): string => {
-            return `  ${line}`;
-          })
-          .join('');
-        console.log(chalk.yellow(lintResult));
+        shellResult.stdout.split(/\r|\n|\r\n/).forEach((line): void => {
+          result.results.push({
+            message: line,
+            file,
+          });
+        });
       }
     });
 
-    const total = summary.count.error + summary.count.warning;
-    if (total > 0) {
-      console.log(
-        chalk['yellow'].bold(
-          [
-            `✗ ${total} ${this.Pluralise('problem', total)}`,
-            ` (${summary.count.error} `,
-            this.Pluralise('error', summary.count.error),
-            `, ${summary.count.warning} `,
-            this.Pluralise('warning', summary.count.warning),
-            ')\n',
-          ].join('')
-        )
-      );
-    }
+    return result;
   }
 }

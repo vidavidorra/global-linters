@@ -1,10 +1,12 @@
 import * as yargs from 'yargs';
 import { Arguments, GlobalLinters } from '..';
+import { ConsoleFormatter } from '.';
 
 export class Cli {
   public Run(argv: string[]): void {
     const args = this.Parse(argv);
-    GlobalLinters(args);
+    const result = GlobalLinters(args);
+    ConsoleFormatter(result);
   }
 
   public Parse(argv: string[]): Arguments {

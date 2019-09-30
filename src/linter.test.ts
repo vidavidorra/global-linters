@@ -186,13 +186,9 @@ describe('Linter', (): void => {
 
       expect((): void => {
         const l = new Linter(mockedLinterName, defaultLinterRange);
-        l.LintFiles(['this_one.ext', 'other.ts']);
+        const result = l.LintFiles(['this_one.ext', 'other.ts']);
+        expect(result.type).toBe('plain-text');
       }).not.toThrow();
-
-      const re = new RegExp(`.*${JSON.stringify(results)}.*`);
-      expect(global.console.log).toHaveBeenCalledWith(
-        expect.stringMatching(re)
-      );
     });
 
     test('Runs linter with formatted JSON linter output if supported.', (): void => {
@@ -212,7 +208,8 @@ describe('Linter', (): void => {
 
       expect((): void => {
         const l = new Linter(mockedLinterName, defaultLinterRange);
-        l.LintFiles(['this_one.ext', 'other.ts']);
+        const result = l.LintFiles(['this_one.ext', 'other.ts']);
+        expect(result.type).toBe('JSON');
       }).not.toThrow();
     });
   });
