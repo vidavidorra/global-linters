@@ -41,7 +41,7 @@ describe('Glob', (): void => {
     test('Validates a valid glob pattern.', (): void => {
       expect((): void => {
         const pattern = '**/*.ts';
-        const g = new Glob(pattern);
+        new Glob(pattern);
       }).not.toThrow();
     });
 
