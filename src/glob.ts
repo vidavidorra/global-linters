@@ -1,4 +1,4 @@
-import { GLError } from './helpers';
+import { GLError } from '.';
 import fs from 'fs';
 import glob from 'glob';
 import ignore from 'ignore';
