@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/vidavidorra/global-linters/compare/v0.1.3...v0.1.4) (2019-10-01)
+
+### Bug Fixes
+
+- **npm:** fix 4 vunerabilities ([d2ab05d](https://github.com/vidavidorra/global-linters/commit/d2ab05d))
+- cannot find module 'ts-custom-error' ([6be10d0](https://github.com/vidavidorra/global-linters/commit/6be10d0))
+
 ### [0.1.3](https://github.com/vidavidorra/global-linters/compare/v0.1.2...v0.1.3) (2019-10-01)
 
 ### Bug Fixes
