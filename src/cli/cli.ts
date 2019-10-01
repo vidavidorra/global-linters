@@ -1,12 +1,21 @@
 import * as yargs from 'yargs';
-import { Arguments, GlobalLinters } from '..';
-import { ConsoleFormatter } from '.';
+import { Arguments, ConsoleFormatter, GLError, GlobalLinters } from '..';
+import chalk from 'chalk';
 
 export class Cli {
   public Run(argv: string[]): void {
-    const args = this.Parse(argv);
-    const result = GlobalLinters(args);
-    ConsoleFormatter(result);
+    try {
+      const args = this.Parse(argv);
+      const result = GlobalLinters(args);
+      ConsoleFormatter(result);
+    } catch (error) {
+      if (error instanceof GLError) {
+        console.log(chalk.red(`Error: ${error.message}`));
+      } else {
+        console.log(error);
+      }
+      process.exit(1);
+    }
   }
 
   public Parse(argv: string[]): Arguments {
