@@ -7,7 +7,12 @@ export class Cli {
     try {
       const args = this.Parse(argv);
       const result = GlobalLinters(args);
+
       ConsoleFormatter(result);
+      if (result.summary.count.error) {
+        process.exit(1);
+      }
+      process.exit(0);
     } catch (error) {
       if (error instanceof GLError) {
         console.log(chalk.red(`Error: ${error.message}`));
