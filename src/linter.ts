@@ -1,5 +1,4 @@
 import { GLError, LintResult, Linters, Result, ShellExec } from '.';
-import chalk from 'chalk';
 import commandExists from 'command-exists';
 import semver from 'semver';
 
