@@ -5,13 +5,15 @@ import semver from 'semver';
 export class Linter {
   private name: string;
   private version: string;
+  private options: string;
 
-  public constructor(name: string, range: string) {
+  public constructor(name: string, range: string, options: string) {
     if (Linters[name] === undefined) {
       throw new GLError(`Linter '${name}' is not supported.`);
     }
 
     this.name = name;
+    this.options = options || undefined;
     this.ValidateExists();
     this.GetVersion();
 
@@ -108,6 +110,9 @@ export class Linter {
     let command = `${this.name}`;
     if (this.SupportsJsonFormat()) {
       command += ` ${Linters[this.name].jsonFormat.option}`;
+    }
+    if (this.options) {
+      command += ` ${this.options}`;
     }
 
     files.forEach((file): void => {

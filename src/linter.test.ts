@@ -11,7 +11,7 @@ describe('Linter', (): void => {
 
   test('Trows if the linter name is not supported.', (): void => {
     expect((): void => {
-      new Linter('abccba', defaultLinterRange);
+      new Linter('abccba', defaultLinterRange, null);
     }).toThrow(/linter .* is not supported/i);
   });
 
@@ -31,7 +31,7 @@ describe('Linter', (): void => {
 
     test('Throws if the linter does not exist.', (): void => {
       expect((): void => {
-        new Linter(defaultLinterName, defaultLinterRange);
+        new Linter(defaultLinterName, defaultLinterRange, null);
       }).toThrow(/could not find executable/i);
     });
   });
@@ -111,7 +111,7 @@ describe('Linter', (): void => {
 
     test('Accepts a valid linter name.', (): void => {
       expect((): void => {
-        new Linter(defaultLinterName, defaultLinterRange);
+        new Linter(defaultLinterName, defaultLinterRange, null);
       }).not.toThrow();
     });
 
@@ -124,25 +124,25 @@ describe('Linter', (): void => {
       );
 
       expect((): void => {
-        new Linter(defaultLinterName, defaultLinterRange);
+        new Linter(defaultLinterName, defaultLinterRange, null);
       }).toThrow(/could find version/i);
     });
 
     test('Accepts a valid range.', (): void => {
       expect((): void => {
-        new Linter(defaultLinterName, defaultLinterRange);
+        new Linter(defaultLinterName, defaultLinterRange, null);
       }).not.toThrow();
     });
 
     test('Throws if the range is invalid.', (): void => {
       expect((): void => {
-        new Linter(defaultLinterName, 'this_is_no range');
+        new Linter(defaultLinterName, 'this_is_no range', null);
       }).toThrow(/is not a valid semver range/i);
     });
 
     test('Throws if the range is not satified.', (): void => {
       expect((): void => {
-        new Linter(defaultLinterName, '>=99.0.0');
+        new Linter(defaultLinterName, '>=99.0.0', null);
       }).toThrow(/does not satisfy/i);
     });
 
@@ -156,7 +156,7 @@ describe('Linter', (): void => {
       };
 
       expect((): void => {
-        const l = new Linter(mockedLinterName, defaultLinterRange);
+        const l = new Linter(mockedLinterName, defaultLinterRange, null);
         l.LintFiles(['uno.x', 'dos.y']);
       }).toThrow(/option .* is not configured/i);
     });
@@ -185,7 +185,7 @@ describe('Linter', (): void => {
         );
 
       expect((): void => {
-        const l = new Linter(mockedLinterName, defaultLinterRange);
+        const l = new Linter(mockedLinterName, defaultLinterRange, null);
         const result = l.LintFiles(['this_one.ext', 'other.ts']);
         expect(result.type).toBe('plain-text');
       }).not.toThrow();
@@ -207,7 +207,7 @@ describe('Linter', (): void => {
         );
 
       expect((): void => {
-        const l = new Linter(mockedLinterName, defaultLinterRange);
+        const l = new Linter(mockedLinterName, defaultLinterRange, null);
         const result = l.LintFiles(['this_one.ext', 'other.ts']);
         expect(result.type).toBe('JSON');
       }).not.toThrow();
