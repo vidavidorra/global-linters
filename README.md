@@ -1,6 +1,6 @@
 # global-linters
 
-Linter wrappers for globally installed linters.
+Linter wrapper for globally installed linters.
 
 ## Table of contents
 
