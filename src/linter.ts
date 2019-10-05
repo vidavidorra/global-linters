@@ -94,7 +94,7 @@ export class Linter {
   }
 
   public LintFiles(files: string[]): Result {
-    let result: Result = {
+    const result: Result = {
       type: this.SupportsJsonFormat() ? 'JSON' : 'plain-text',
       results: [],
       summary: {

@@ -22,7 +22,7 @@ interface ResultLengths {
 }
 
 function GetMaxLengths(results: LintResult[]): ResultLengths {
-  let lengths: ResultLengths = {
+  const lengths: ResultLengths = {
     code: 0,
     message: 0,
     line: 0,
