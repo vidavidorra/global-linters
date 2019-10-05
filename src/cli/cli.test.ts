@@ -22,12 +22,13 @@ describe('Cli', (): void => {
 
     /**
      * Ignore the following line because the mock implementation for
-     * `process.exit` does not compy with the standard exit type of
+     * `process.exit` does not comply with the standard exit type of
      * `(code?: number) => never`. That is fine in this case since the program
      * shouldn't actually exit but just let the tests detect that it would have.
      */
-    // @ts-ignore
-    mockExit = jest.spyOn(process, 'exit').mockImplementation((): void => {});
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore: TS2534: A function returning 'never' cannot have a reachable end point.
+    mockExit = jest.spyOn(process, 'exit').mockImplementation((): never => {});
   });
 
   afterEach((): void => {

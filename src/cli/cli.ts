@@ -1,6 +1,6 @@
-import * as yargs from 'yargs';
 import { Arguments, ConsoleFormatter, GLError, GlobalLinters } from '..';
 import chalk from 'chalk';
+import yargs from 'yargs';
 
 export class Cli {
   public Run(argv: string[]): void {
