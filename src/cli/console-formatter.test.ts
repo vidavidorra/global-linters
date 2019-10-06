@@ -73,8 +73,8 @@ describe('Console', (): void => {
     expect(mockConsoleError).not.toHaveBeenCalled();
   });
 
-  describe('JSON result', (): void => {
-    test('Prints to console without summary if there are no warnings or errors', (): void => {
+  describe('JSON result prints to console', (): void => {
+    test('Without summary if there are no warnings or errors', (): void => {
       const result: Result = {
         type: 'JSON',
         results: [
@@ -146,7 +146,7 @@ describe('Console', (): void => {
       expect(mockConsoleError).not.toHaveBeenCalled();
     });
 
-    test('Prints to console with error summary if there are errors and warnings', (): void => {
+    test('With error summary if there are errors and warnings', (): void => {
       const result: Result = {
         type: 'JSON',
         results: [
@@ -218,7 +218,7 @@ describe('Console', (): void => {
       expect(mockConsoleError).not.toHaveBeenCalled();
     });
 
-    test('Prints to console with error summary if there are errors', (): void => {
+    test('With error summary if there are errors', (): void => {
       const result: Result = {
         type: 'JSON',
         results: [
@@ -290,7 +290,7 @@ describe('Console', (): void => {
       expect(mockConsoleError).not.toHaveBeenCalled();
     });
 
-    test('Prints to console with warning summary if there are warnings', (): void => {
+    test('With warning summary if there are warnings', (): void => {
       const result: Result = {
         type: 'JSON',
         results: [
