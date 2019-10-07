@@ -1,6 +1,7 @@
 import * as GlobalLinters from '../global-linters';
 import { Cli } from '.';
 import { Result } from '..';
+import { GLError } from '../helpers';
 
 jest.mock('../global-linters');
 
@@ -13,6 +14,7 @@ describe('Cli', (): void => {
   const defaultLinter = 'hadolint';
   const defaultGlob = '*';
 
+  let result;
   beforeEach((): void => {
     consoleLog = '';
     mockConsoleLog = jest
@@ -37,6 +39,19 @@ describe('Cli', (): void => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore: TS2534: A function returning 'never' cannot have a reachable end point.
     mockExit = jest.spyOn(process, 'exit').mockImplementation((): never => {});
+
+    result = {
+      type: 'JSON',
+      results: [],
+      summary: {
+        count: {
+          error: 0,
+          warning: 0,
+          info: 0,
+          other: 0,
+        },
+      },
+    };
   });
 
   afterEach((): void => {
@@ -45,6 +60,7 @@ describe('Cli', (): void => {
     mockConsoleError.mockRestore();
     consoleError = '';
     mockExit.mockRestore();
+    result = {};
   });
 
   describe('Argument parser exits with error code and message', (): void => {
@@ -133,7 +149,7 @@ describe('Cli', (): void => {
       }
     );
 
-    test('If all argumenta are given.', (): void => {
+    test('If all arguments are given', (): void => {
       cliArguments = cliArguments.concat([
         '--options',
         '"--thing -vv -a=yes -e this"',
@@ -151,23 +167,13 @@ describe('Cli', (): void => {
     });
   });
 
-  test('Runs GlobalLinters.', (): void => {
+  test('GlobalLinters', (): void => {
+    result.summary.count.error = 1;
     const mockGlobalLinters = jest
       .spyOn(GlobalLinters, 'GlobalLinters')
       .mockImplementation(
         (): Result => {
-          return {
-            type: 'JSON',
-            results: [],
-            summary: {
-              count: {
-                error: 0,
-                warning: 0,
-                info: 0,
-                other: 0,
-              },
-            },
-          };
+          return result;
         }
       );
 
@@ -176,5 +182,85 @@ describe('Cli', (): void => {
 
     expect(mockGlobalLinters).toBeCalledTimes(1);
     expect(mockConsoleError).not.toHaveBeenCalled();
+    mockGlobalLinters.mockRestore();
+  });
+
+  describe('Exits after running the linter', (): void => {
+    let mockGlobalLinters;
+    let cliArguments = [];
+    beforeEach((): void => {
+      mockGlobalLinters = jest
+        .spyOn(GlobalLinters, 'GlobalLinters')
+        .mockImplementation(
+          (): Result => {
+            return result;
+          }
+        );
+
+      cliArguments = [defaultLinter, defaultGlob];
+    });
+
+    afterEach((): void => {
+      mockGlobalLinters.mockRestore();
+      cliArguments = [];
+    });
+
+    test('With code 0 on success', (): void => {
+      const cli = new Cli();
+      cli.Run(cliArguments);
+
+      expect(mockExit).toHaveBeenCalledTimes(1);
+      expect(mockExit).toHaveBeenCalledWith(0);
+    });
+
+    test('With non-zero on lint error', (): void => {
+      result.summary.count.error = 1;
+      mockGlobalLinters = jest
+        .spyOn(GlobalLinters, 'GlobalLinters')
+        .mockImplementationOnce(
+          (): Result => {
+            return result;
+          }
+        );
+
+      const cli = new Cli();
+      cli.Run(cliArguments);
+
+      expect(mockExit).toHaveBeenCalledTimes(1);
+      expect(mockExit).not.toHaveBeenCalledWith(0);
+      mockGlobalLinters.mockRestore();
+    });
+
+    test('With non-zero on thrown GLError', (): void => {
+      const mockGlobalLinters = jest
+        .spyOn(GlobalLinters, 'GlobalLinters')
+        .mockImplementationOnce(
+          (): Result => {
+            throw new GLError('Fault');
+          }
+        );
+
+      const cli = new Cli();
+      cli.Run(cliArguments);
+      expect(mockExit).toHaveBeenCalledTimes(1);
+      expect(mockExit).not.toHaveBeenCalledWith(0);
+      mockGlobalLinters.mockRestore();
+    });
+
+    test('With non-zero on thrown Error', (): void => {
+      const mockGlobalLinters = jest
+        .spyOn(GlobalLinters, 'GlobalLinters')
+        .mockImplementationOnce(
+          (): Result => {
+            throw new Error('Fault');
+          }
+        );
+
+      const cli = new Cli();
+      cli.Run(cliArguments);
+      expect(mockExit).toHaveBeenCalledTimes(1);
+      expect(mockExit).not.toHaveBeenCalledWith(0);
+      mockGlobalLinters.mockRestore();
+    });
   });
 });

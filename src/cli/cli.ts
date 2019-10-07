@@ -1,4 +1,5 @@
-import { Arguments, ConsoleFormatter, GLError, GlobalLinters } from '..';
+import { Arguments, GLError, GlobalLinters } from '..';
+import { ConsoleFormatter } from './console-formatter';
 import chalk from 'chalk';
 import yargs from 'yargs';
 
@@ -11,8 +12,9 @@ export class Cli {
       ConsoleFormatter(result);
       if (result.summary.count.error) {
         process.exit(1);
+      } else {
+        process.exit(0);
       }
-      process.exit(0);
     } catch (error) {
       if (error instanceof GLError) {
         console.log(chalk.red(`Error: ${error.message}`));
