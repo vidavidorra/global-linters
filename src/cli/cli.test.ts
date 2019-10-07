@@ -5,20 +5,28 @@ import { Result } from '..';
 jest.mock('../global-linters');
 
 describe('Cli', (): void => {
+  let consoleLog;
   let mockConsoleLog;
+  let consoleError;
   let mockConsoleError;
   let mockExit;
   const defaultLinter = 'hadolint';
   const defaultGlob = '*';
 
   beforeEach((): void => {
+    consoleLog = '';
     mockConsoleLog = jest
       .spyOn(console, 'log')
-      .mockImplementation((): void => {});
+      .mockImplementation((msg: string): void => {
+        consoleLog += msg;
+      });
 
+    consoleError = '';
     mockConsoleError = jest
       .spyOn(console, 'error')
-      .mockImplementation((): void => {});
+      .mockImplementation((msg: string): void => {
+        consoleError += msg;
+      });
 
     /**
      * Ignore the following line because the mock implementation for
@@ -33,7 +41,9 @@ describe('Cli', (): void => {
 
   afterEach((): void => {
     mockConsoleLog.mockRestore();
+    consoleLog = '';
     mockConsoleError.mockRestore();
+    consoleError = '';
     mockExit.mockRestore();
   });
 
@@ -43,6 +53,7 @@ describe('Cli', (): void => {
       cli.Parse([]);
 
       expect(mockConsoleError).toHaveBeenCalled();
+      expect(consoleError).not.toBe('');
       expect(mockExit).toHaveBeenCalledTimes(1);
       expect(mockExit).not.toHaveBeenCalledWith(0);
     });
@@ -54,6 +65,7 @@ describe('Cli', (): void => {
         cli.Parse([args]);
 
         expect(mockConsoleError).toHaveBeenCalled();
+        expect(consoleError).not.toBe('');
         expect(mockExit).toHaveBeenCalledTimes(1);
         expect(mockExit).not.toHaveBeenCalledWith(0);
       }
@@ -64,12 +76,13 @@ describe('Cli', (): void => {
       cli.Parse(['abcdef', defaultGlob]);
 
       expect(mockConsoleError).toHaveBeenCalled();
+      expect(consoleError).not.toBe('');
       expect(mockExit).toHaveBeenCalledTimes(1);
       expect(mockExit).not.toHaveBeenCalledWith(0);
     });
   });
 
-  describe('Argument parser exits with success code and message', (): void => {
+  describe('Argument parser exits with success code (and message)', (): void => {
     let cliArguments = [];
     beforeEach((): void => {
       cliArguments = [defaultLinter, defaultGlob];
@@ -86,6 +99,7 @@ describe('Cli', (): void => {
         cli.Parse([args]);
 
         expect(mockConsoleLog).toHaveBeenCalled();
+        expect(consoleLog).not.toBe('');
         expect(mockConsoleError).not.toHaveBeenCalled();
         expect(mockExit).toHaveBeenCalledTimes(1);
         expect(mockExit).toHaveBeenCalledWith(0);
