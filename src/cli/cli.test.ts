@@ -106,18 +106,21 @@ describe('Cli', (): void => {
       ['--ignorePath', '.my_ignorefile'],
       ['-i', '.my_ignorefile'],
       ['--options', "'--thing -vv -a=yes -e this'"],
-    ])('If the `%s` argument is given.', (args): void => {
-      cliArguments.concat(args);
+    ])(
+      'If the positional arguments and the `%s` option is given',
+      (option, value): void => {
+        cliArguments = cliArguments.concat([option, value]);
 
-      const cli = new Cli();
-      cli.Parse(cliArguments);
+        const cli = new Cli();
+        cli.Parse(cliArguments);
 
-      expect(mockConsoleError).not.toHaveBeenCalled();
-      expect(mockExit).not.toHaveBeenCalled();
-    });
+        expect(mockConsoleError).not.toHaveBeenCalled();
+        expect(mockExit).not.toHaveBeenCalled();
+      }
+    );
 
     test('If all argumenta are given.', (): void => {
-      cliArguments.concat([
+      cliArguments = cliArguments.concat([
         '--options',
         "'--thing -vv -a=yes -e this'",
         '--ignorePath',
