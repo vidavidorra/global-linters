@@ -37,8 +37,8 @@ describe('Cli', (): void => {
     mockExit.mockRestore();
   });
 
-  describe('Exits with error code and message.', (): void => {
-    test('If no arguments are given.', (): void => {
+  describe('Argument parser exits with error code and message', (): void => {
+    test('If no arguments and options are given', (): void => {
       const cli = new Cli();
       cli.Parse([]);
 
@@ -47,9 +47,9 @@ describe('Cli', (): void => {
       expect(mockExit).not.toHaveBeenCalledWith(0);
     });
 
-    test.each([defaultLinter, defaultGlob])(
-      'If only the positional `%s` argument is given.',
-      (args): void => {
+    test.each([['linter', defaultLinter], ['glob', defaultGlob]])(
+      'If only the positional %s argument is given',
+      (name, args): void => {
         const cli = new Cli();
         cli.Parse([args]);
 
@@ -59,7 +59,7 @@ describe('Cli', (): void => {
       }
     );
 
-    test('If the positional linter argument is not in choices.', (): void => {
+    test('If the positional linter argument is not in choices', (): void => {
       const cli = new Cli();
       cli.Parse(['abcdef', defaultGlob]);
 
@@ -69,7 +69,7 @@ describe('Cli', (): void => {
     });
   });
 
-  describe('Exits with success code and message.', (): void => {
+  describe('Argument parser exits with success code and message', (): void => {
     let cliArguments = [];
     beforeEach((): void => {
       cliArguments = [defaultLinter, defaultGlob];
@@ -80,7 +80,7 @@ describe('Cli', (): void => {
     });
 
     test.each(['--help', '-h', '--version', '-v'])(
-      'If the `%s` arguments is given.',
+      'If only the `%s` option is given',
       (args): void => {
         const cli = new Cli();
         cli.Parse([args]);
@@ -92,7 +92,7 @@ describe('Cli', (): void => {
       }
     );
 
-    test('If only the positonal arguments are given.', (): void => {
+    test('If only the positional arguments are given', (): void => {
       const cli = new Cli();
       cli.Parse(cliArguments);
 
@@ -107,7 +107,7 @@ describe('Cli', (): void => {
       ['-i', '.my_ignorefile'],
       ['--options', "'--thing -vv -a=yes -e this'"],
     ])(
-      'If the positional arguments and the `%s` option is given',
+      'If the positional arguments and the `%s` option are given',
       (option, value): void => {
         cliArguments = cliArguments.concat([option, value]);
 
