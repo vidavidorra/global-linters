@@ -119,7 +119,7 @@ describe('Cli', (): void => {
       ['-r', '>1.0.0'],
       ['--ignorePath', '.my_ignorefile'],
       ['-i', '.my_ignorefile'],
-      ['--options', "'--thing -vv -a=yes -e this'"],
+      ['--options', '"--thing -vv -a=yes -e this"'],
     ])(
       'If the positional arguments and the `%s` option are given',
       (option, value): void => {
@@ -136,7 +136,7 @@ describe('Cli', (): void => {
     test('If all argumenta are given.', (): void => {
       cliArguments = cliArguments.concat([
         '--options',
-        "'--thing -vv -a=yes -e this'",
+        '"--thing -vv -a=yes -e this"',
         '--ignorePath',
         '.my_ignorefile',
         '--range',
