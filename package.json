@@ -25,7 +25,7 @@
     "global-linters": "dist/bin/global-linters.js"
   },
   "files": [
-    "dist"
+    "dist/**/!(*.test).{js,d.ts}"
   ],
   "repository": {
     "type": "git",
