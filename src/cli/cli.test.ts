@@ -1,7 +1,7 @@
 import * as GlobalLinters from '../global-linters';
 import { Cli } from '.';
-import { Result } from '..';
 import { GLError } from '../helpers';
+import { Result } from '..';
 
 jest.mock('../global-linters');
 
