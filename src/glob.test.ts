@@ -4,56 +4,74 @@ import glob from 'glob';
 import path from 'path';
 
 jest.mock('fs');
-const mockedFs = fs as jest.Mocked<typeof fs>;
 jest.mock('glob');
-const mockedGlob = glob as jest.Mocked<typeof glob>;
 
 describe('Glob', (): void => {
-  describe('Ignore path', (): void => {
-    test('Uses the default if none is given and the default exists.', (): void => {
-      mockedFs.existsSync.mockReturnValue(true);
-      const g = new Glob('*');
-      expect(g.IgnorePath()).toBe('.prettierignore');
-    });
+  let mockFsExistsSync;
+  let mockFsReadFileSync;
 
-    test('Is not used if none is given and the default does not exist.', (): void => {
-      mockedFs.existsSync.mockReturnValue(false);
-      const g = new Glob('*');
-      expect(g.IgnorePath()).toBeUndefined();
-    });
+  const defaultPattern = '**/*.ts';
 
-    test('Uses the given ignore path if it exists.', (): void => {
-      mockedFs.existsSync.mockReturnValue(true);
-      const ignoreFile = '.ignorefile';
-      const g = new Glob('*', ignoreFile);
-      expect(g.IgnorePath()).toBe(ignoreFile);
-    });
+  beforeEach((): void => {
+    mockFsExistsSync = jest
+      .spyOn(fs, 'existsSync')
+      .mockImplementation((): boolean => {
+        return true;
+      });
 
-    test('Throws if the given ignore path is non-existing.', (): void => {
-      mockedFs.existsSync.mockReturnValue(false);
-      expect((): void => {
-        new Glob('*', 'somerandomfile');
-      }).toThrow(/ignore path .* doesn't exist/i);
-    });
+    mockFsReadFileSync = jest.spyOn(fs, 'readFileSync');
   });
 
-  describe('Pattern', (): void => {
-    test('Validates a valid glob pattern.', (): void => {
-      expect((): void => {
-        const pattern = '**/*.ts';
-        new Glob(pattern);
-      }).not.toThrow();
-    });
+  afterEach((): void => {
+    mockFsExistsSync.mockRestore();
+    mockFsReadFileSync.mockRestore();
+  });
 
-    test('Throws if an invalid glob pattern is given.', (): void => {
-      expect((): void => {
-        new Glob('a');
-      }).toThrow(/is not a valid glob pattern/i);
-    });
+  test('Throws if an invalid glob pattern is given', (): void => {
+    expect((): void => {
+      new Glob('a');
+    }).toThrow(/is not a valid glob pattern/i);
+  });
+
+  test('Validates a valid glob pattern', (): void => {
+    expect((): void => {
+      new Glob(defaultPattern);
+    }).not.toThrow();
+  });
+
+  test('Uses the default ignore path if none is given and the default exists', (): void => {
+    const g = new Glob(defaultPattern);
+    expect(g.IgnorePath()).toBe('.prettierignore');
+  });
+
+  test('Uses no ignore path if none is given and the default does not exist', (): void => {
+    mockFsExistsSync = jest
+      .spyOn(fs, 'existsSync')
+      .mockImplementation((): boolean => {
+        return false;
+      });
+    const g = new Glob(defaultPattern);
+    expect(g.IgnorePath()).toBeUndefined();
+  });
+
+  test('Uses the given ignore path if it exists', (): void => {
+    const ignoreFile = '.ignorefile';
+    const g = new Glob(defaultPattern, ignoreFile);
+    expect(g.IgnorePath()).toBe(ignoreFile);
+  });
+
+  test('Throws if the given ignore path is non-existing', (): void => {
+    mockFsExistsSync = jest
+      .spyOn(fs, 'existsSync')
+      .mockImplementation((): boolean => {
+        return false;
+      });
+    expect((): void => {
+      new Glob('*', 'somerandomfile');
+    }).toThrow(/ignore path .* doesn't exist/i);
   });
 
   describe('Files', (): void => {
-    const pathPrefix = process.cwd();
     const defaultInputFiles = [
       'test/stuff.ts',
       'test/butterfly.ts',
@@ -61,28 +79,52 @@ describe('Glob', (): void => {
       'duck.js',
       'frog',
     ];
+
+    let mockGlob;
+
+    beforeEach((): void => {
+      mockGlob = jest
+        .spyOn(glob, 'sync')
+        .mockImplementationOnce((): string[] => {
+          return defaultInputFiles;
+        });
+    });
+
+    afterEach((): void => {
+      mockGlob.mockRestore();
+    });
+
+    const pathPrefix = process.cwd();
+
     const defaultInputFilesWithPrefix = defaultInputFiles.map(
       (file): string => {
         return path.join(pathPrefix, file);
       }
     );
 
-    test('Are not filtered if no ignore path is given and the default path does not exist.', (): void => {
-      mockedFs.existsSync.mockReturnValue(false);
-      mockedGlob.sync.mockReturnValue(defaultInputFiles);
+    test('Are not filtered if no ignore path is given and the default path does not exist', (): void => {
+      mockFsExistsSync = jest
+        .spyOn(fs, 'existsSync')
+        .mockImplementation((): boolean => {
+          return false;
+        });
 
       const g = new Glob('*');
       expect(g.Files()).toStrictEqual(defaultInputFilesWithPrefix);
     });
 
-    test('Are filtered using the default ignorepath if it exists.', (): void => {
+    test('Are filtered using the default ignorepath if it exists', (): void => {
+      mockFsReadFileSync = jest
+        .spyOn(fs, 'readFileSync')
+        .mockImplementationOnce(
+          (): Buffer => {
+            return Buffer.from('**/*.js\n', 'utf8');
+          }
+        );
+
       const expectedFiles = defaultInputFilesWithPrefix.filter((e): boolean => {
         return !e.endsWith('.js');
       });
-
-      mockedFs.existsSync.mockReturnValue(true);
-      mockedGlob.sync.mockReturnValue(defaultInputFiles);
-      mockedFs.readFileSync.mockReturnValue(Buffer.from('**/*.js\n', 'utf8'));
 
       const g = new Glob('*', '.ignorefile');
       expect(g.Files()).toStrictEqual(expectedFiles);
