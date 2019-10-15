@@ -12,7 +12,7 @@ describe('Cli', (): void => {
   let mockConsoleError;
   let mockExit;
   const defaultLinter = 'hadolint';
-  const defaultGlob = '*';
+  const defaultFileAndOrGlob = '*';
 
   let result;
   beforeEach((): void => {
@@ -74,7 +74,7 @@ describe('Cli', (): void => {
       expect(mockExit).not.toHaveBeenCalledWith(0);
     });
 
-    test.each([['linter', defaultLinter], ['glob', defaultGlob]])(
+    test.each([['linter', defaultLinter], ['glob', defaultFileAndOrGlob]])(
       'If only the positional %s argument is given',
       (name, args): void => {
         const cli = new Cli();
@@ -89,7 +89,7 @@ describe('Cli', (): void => {
 
     test('If the positional linter argument is not in choices', (): void => {
       const cli = new Cli();
-      cli.Parse(['abcdef', defaultGlob]);
+      cli.Parse(['abcdef', defaultFileAndOrGlob]);
 
       expect(mockConsoleError).toHaveBeenCalled();
       expect(consoleError).not.toBe('');
@@ -101,7 +101,7 @@ describe('Cli', (): void => {
   describe('Argument parser exits with success code (and message)', (): void => {
     let cliArguments = [];
     beforeEach((): void => {
-      cliArguments = [defaultLinter, defaultGlob];
+      cliArguments = [defaultLinter, defaultFileAndOrGlob];
     });
 
     afterEach((): void => {
@@ -167,7 +167,7 @@ describe('Cli', (): void => {
     });
   });
 
-  test('GlobalLinters', (): void => {
+  test('Runs GlobalLinters', (): void => {
     result.summary.count.error = 1;
     const mockGlobalLinters = jest
       .spyOn(GlobalLinters, 'GlobalLinters')
@@ -178,7 +178,7 @@ describe('Cli', (): void => {
       );
 
     const cli = new Cli();
-    cli.Run([defaultLinter, defaultGlob]);
+    cli.Run([defaultLinter, defaultFileAndOrGlob]);
 
     expect(mockGlobalLinters).toBeCalledTimes(1);
     expect(mockConsoleError).not.toHaveBeenCalled();
@@ -197,7 +197,7 @@ describe('Cli', (): void => {
           }
         );
 
-      cliArguments = [defaultLinter, defaultGlob];
+      cliArguments = [defaultLinter, defaultFileAndOrGlob];
     });
 
     afterEach((): void => {

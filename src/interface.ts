@@ -1,6 +1,6 @@
 export interface Arguments {
   linter: string;
-  glob: string;
+  fileAndOrGlob: string[];
   ignorePath?: string;
   range?: string;
   options?: string;

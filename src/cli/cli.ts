@@ -29,7 +29,7 @@ export class Cli {
     const args = yargs
       .strict(true)
       .usage(
-        '$0 [options] <linter> <glob>',
+        '$0 [options] <linter> <file|glob..>',
         'Run globally installed linters',
         (yargs): yargs.Argv => {
           return yargs
@@ -38,8 +38,11 @@ export class Cli {
               type: 'string',
               choices: ['hadolint', 'shellcheck'],
             })
-            .positional('glob', {
-              describe: 'Glob pattern for searching files',
+            .positional('file|glob', {
+              describe:
+                'Files and/or glob patterns to lint' +
+                '\nNote that unquoted globs will be expanded by the shell.' +
+                ' Therefore, it is recommended to quote glob patterns.',
               type: 'string',
             });
         }
@@ -71,7 +74,7 @@ export class Cli {
 
     return {
       linter: args.linter as string,
-      glob: args.glob as string,
+      fileAndOrGlob: args.glob as string[],
       ignorePath: (args.ignorePath as string) || undefined,
       range: (args.range as string) || undefined,
       options: (args.options as string) || undefined,
