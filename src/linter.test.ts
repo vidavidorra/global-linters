@@ -1,6 +1,5 @@
 import * as ShellExec from './helpers/shell-exec';
-import { Linter } from './linter';
-import { Linters } from './linters';
+import { Linter, Linters } from '.';
 import commandExists from 'command-exists';
 
 jest.mock('./helpers/shell-exec');

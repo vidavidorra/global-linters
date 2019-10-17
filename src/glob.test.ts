@@ -1,4 +1,4 @@
-import { Glob } from './glob';
+import { Glob } from '.';
 import glob from 'glob';
 
 jest.mock('glob');
