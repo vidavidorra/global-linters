@@ -6,7 +6,7 @@ export class FileEnumerator {
   private fileAndOrGlob: string[];
   private files: string[];
   private workingDirectory: string;
-  private ignorePath;
+  private ignorePath: string;
   private fileIgnorer: FileIgnorer;
 
   public constructor(fileAndOrGlob: string[], ignorePath: string = undefined) {
@@ -42,6 +42,7 @@ export class FileEnumerator {
 
   public Files(): string[] {
     if (!this.files) {
+      // Trigger the validations FileIgnorer does on the ignore path.
       this.fileIgnorer = new FileIgnorer(this.ignorePath);
 
       this.files = [];
