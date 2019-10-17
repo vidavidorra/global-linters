@@ -1,16 +1,27 @@
-import { FileEnumerator } from './file-enumerator';
+import { FileEnumerator } from '.';
 import path from 'path';
 
 describe('FileEnumerator', (): void => {
   const workingDirectory = process.cwd();
-  const globPattern = '*.md';
+  const globPattern = 'test/**/*.{js,ts}';
   const filesFromGlobPattern = [
-    path.join(workingDirectory, 'CHANGELOG.md'),
-    path.join(workingDirectory, 'README.md'),
-  ];
-  const relativePath = './package.json';
+    'elephant.ts',
+    'hedgehog.js',
+    'insecta/butterfly.ts',
+    'insecta/dragonfly.js',
+    'reptilia/icarosaurus.js',
+    'reptilia/iguana.ts',
+    'reptilia/turtle.ts',
+  ].map((file): string => {
+    return path.join(workingDirectory, 'test', file);
+  });
+
+  const relativePath = 'test/insecta/honeybee.json';
   const filesFromRelativePath = [path.join(workingDirectory, relativePath)];
-  const absolutePath = `${path.join(workingDirectory, '.gitignore')}`;
+  const absolutePath = path.join(
+    workingDirectory,
+    'test/reptilia/pogona-barbata.json'
+  );
 
   test('Accepts a single glob pattern', (): void => {
     const fileEnumerator = new FileEnumerator([globPattern]);
@@ -60,7 +71,7 @@ describe('FileEnumerator', (): void => {
         const files = fileEnumerator.Files();
 
         expect(files).toEqual(filesFromRelativePath);
-        expect(files.length).toBe(filesFromRelativePath.length);
+        expect(files).toHaveLength(filesFromRelativePath.length);
       });
 
       test('From only an absolute path', (): void => {
@@ -68,24 +79,21 @@ describe('FileEnumerator', (): void => {
         const files = fileEnumerator.Files();
 
         expect(files).toEqual([absolutePath]);
-        expect(files.length).toBe(1);
+        expect(files).toHaveLength(1);
       });
 
       test('From a combination of a glob pattern, relative and absolute path', (): void => {
         const filesAndGlob = [globPattern, relativePath, absolutePath];
-
         const fileEnumerator = new FileEnumerator(filesAndGlob);
         const files = fileEnumerator.Files();
 
-        filesFromGlobPattern.forEach((file): void => {
-          expect(files).toContain(file);
-        });
-        filesFromRelativePath.forEach((file): void => {
-          expect(files).toContain(file);
-        });
+        filesFromGlobPattern
+          .concat(filesFromRelativePath)
+          .forEach((file): void => {
+            expect(files).toContain(file);
+          });
         expect(files).toContain(absolutePath);
-
-        expect(files.length).toBeGreaterThanOrEqual(
+        expect(files).toHaveLength(
           filesFromGlobPattern.length + filesFromRelativePath.length + 1
         );
       });
@@ -96,9 +104,23 @@ describe('FileEnumerator', (): void => {
         const files2 = fileEnumerator.Files();
 
         expect(files1).toEqual(filesFromRelativePath);
-        expect(files1.length).toBe(filesFromRelativePath.length);
+        expect(files1).toHaveLength(filesFromRelativePath.length);
         expect(files2).toEqual(filesFromRelativePath);
-        expect(files2.length).toBe(filesFromRelativePath.length);
+        expect(files2).toHaveLength(filesFromRelativePath.length);
+      });
+
+      test('Without files ignored based on glob patterns described by the ignore path', (): void => {
+        const fileEnumerator = new FileEnumerator(
+          [globPattern],
+          'test/.ignore'
+        );
+        const expectedFiles = filesFromGlobPattern.filter((file): boolean => {
+          return !file.endsWith('.js');
+        });
+        const files = fileEnumerator.Files();
+
+        expect(files).toEqual(expectedFiles);
+        expect(files).toHaveLength(expectedFiles.length);
       });
     });
   });
