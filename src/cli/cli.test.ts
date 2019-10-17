@@ -134,6 +134,7 @@ describe('Cli', (): void => {
       ['--range', '>1.0.0'],
       ['-r', '>1.0.0'],
       ['--ignorePath', '.my_ignorefile'],
+      ['--noIgnore', 'true'],
       ['-i', '.my_ignorefile'],
       ['--options', '"--thing -vv -a=yes -e this"'],
     ])(
@@ -149,7 +150,7 @@ describe('Cli', (): void => {
       }
     );
 
-    test('If all arguments are given', (): void => {
+    test('If all arguments are given (without conflicting ones)', (): void => {
       cliArguments = cliArguments.concat([
         '--options',
         '"--thing -vv -a=yes -e this"',

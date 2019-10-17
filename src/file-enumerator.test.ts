@@ -24,23 +24,23 @@ describe('FileEnumerator', (): void => {
   );
 
   test('Accepts a single glob pattern', (): void => {
-    const fileEnumerator = new FileEnumerator([globPattern]);
+    const fileEnumerator = new FileEnumerator([globPattern], false);
     fileEnumerator.Files();
   });
 
   test('Accepts a single relative path', (): void => {
-    const fileEnumerator = new FileEnumerator([relativePath]);
+    const fileEnumerator = new FileEnumerator([relativePath], false);
     fileEnumerator.Files();
   });
 
   test('Accepts a single absolute path', (): void => {
-    const fileEnumerator = new FileEnumerator([absolutePath]);
+    const fileEnumerator = new FileEnumerator([absolutePath], false);
     fileEnumerator.Files();
   });
 
   describe('Files()', (): void => {
     test('Throws if neither an existing file nor a valid glob was given', (): void => {
-      const fileEnumerator = new FileEnumerator(['invalid']);
+      const fileEnumerator = new FileEnumerator(['invalid'], false);
 
       expect((): void => {
         fileEnumerator.Files();
@@ -48,14 +48,14 @@ describe('FileEnumerator', (): void => {
     });
 
     test('Returns an empty array for a glob pattern with no matches', (): void => {
-      const fileEnumerator = new FileEnumerator(['*.not_existing']);
+      const fileEnumerator = new FileEnumerator(['*.not_existing'], false);
       const files = fileEnumerator.Files();
       expect(files).toEqual([]);
     });
 
     describe('Returns an array of files as absolute paths', (): void => {
       test('From only a glob pattern', (): void => {
-        const fileEnumerator = new FileEnumerator([globPattern]);
+        const fileEnumerator = new FileEnumerator([globPattern], false);
         const files = fileEnumerator.Files();
 
         filesFromGlobPattern.forEach((file): void => {
@@ -67,7 +67,7 @@ describe('FileEnumerator', (): void => {
       });
 
       test('From only a relative path', (): void => {
-        const fileEnumerator = new FileEnumerator([relativePath]);
+        const fileEnumerator = new FileEnumerator([relativePath], false);
         const files = fileEnumerator.Files();
 
         expect(files).toEqual(filesFromRelativePath);
@@ -75,7 +75,7 @@ describe('FileEnumerator', (): void => {
       });
 
       test('From only an absolute path', (): void => {
-        const fileEnumerator = new FileEnumerator([absolutePath]);
+        const fileEnumerator = new FileEnumerator([absolutePath], false);
         const files = fileEnumerator.Files();
 
         expect(files).toEqual([absolutePath]);
@@ -84,7 +84,7 @@ describe('FileEnumerator', (): void => {
 
       test('From a combination of a glob pattern, relative and absolute path', (): void => {
         const filesAndGlob = [globPattern, relativePath, absolutePath];
-        const fileEnumerator = new FileEnumerator(filesAndGlob);
+        const fileEnumerator = new FileEnumerator(filesAndGlob, false);
         const files = fileEnumerator.Files();
 
         filesFromGlobPattern
@@ -99,7 +99,7 @@ describe('FileEnumerator', (): void => {
       });
 
       test('When calling Files() multiple times', (): void => {
-        const fileEnumerator = new FileEnumerator([relativePath]);
+        const fileEnumerator = new FileEnumerator([relativePath], false);
         const files1 = fileEnumerator.Files();
         const files2 = fileEnumerator.Files();
 
@@ -112,6 +112,7 @@ describe('FileEnumerator', (): void => {
       test('Without files ignored based on glob patterns described by the ignore path', (): void => {
         const fileEnumerator = new FileEnumerator(
           [globPattern],
+          false,
           'test/.ignore'
         );
         const expectedFiles = filesFromGlobPattern.filter((file): boolean => {
@@ -121,6 +122,18 @@ describe('FileEnumerator', (): void => {
 
         expect(files).toEqual(expectedFiles);
         expect(files).toHaveLength(expectedFiles.length);
+      });
+
+      test('Without ignoring files if the noIgnore argument was given', (): void => {
+        const fileEnumerator = new FileEnumerator(
+          [globPattern],
+          true,
+          'test/.ignore'
+        );
+        const files = fileEnumerator.Files();
+
+        expect(files).toEqual(filesFromGlobPattern);
+        expect(files).toHaveLength(filesFromGlobPattern.length);
       });
     });
   });

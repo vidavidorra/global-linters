@@ -54,6 +54,10 @@ export class Cli {
             'Path to a file containing patterns that describe files to ignore.',
           type: 'string',
         },
+        noIgnore: {
+          describe: 'Disable the use of ignore files.',
+          type: 'boolean',
+        },
         range: {
           alias: 'r',
           describe: 'Version range the linter must satisfy',
@@ -70,14 +74,16 @@ export class Cli {
           alias: 'h',
         },
       })
+      .conflicts('noIgnore', 'ignorePath')
       .parse(argv);
 
     return {
       linter: args.linter as string,
       fileAndOrGlob: args.glob as string[],
-      ignorePath: (args.ignorePath as string) || undefined,
-      range: (args.range as string) || undefined,
-      options: (args.options as string) || undefined,
+      ignorePath: args.ignorePath || undefined,
+      noIgnore: args.noIgnore || false,
+      range: args.range || undefined,
+      options: args.options || undefined,
     };
   }
 }

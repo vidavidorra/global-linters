@@ -2,6 +2,7 @@ export interface Arguments {
   linter: string;
   fileAndOrGlob: string[];
   ignorePath?: string;
+  noIgnore: boolean;
   range?: string;
   options?: string;
 }
