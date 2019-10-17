@@ -1,6 +1,6 @@
 {
   "name": "global-linters",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Linter wrappers for globally installed linters",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",

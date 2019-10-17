@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/vidavidorra/global-linters/compare/v0.1.4...v0.1.5) (2019-10-17)
+
+### Bug Fixes
+
+- add `src` to the package's main and types ([ddb2d04](https://github.com/vidavidorra/global-linters/commit/ddb2d04))
+- add type to ignorePath in FileEnumerator ([e65458b](https://github.com/vidavidorra/global-linters/commit/e65458b))
+- two lint warnigns of prefer-const ([b833643](https://github.com/vidavidorra/global-linters/commit/b833643))
+- update packages to latest version ([966401c](https://github.com/vidavidorra/global-linters/commit/966401c))
+
+### Features
+
+- add option to disable the use of ignore files ([c3388f4](https://github.com/vidavidorra/global-linters/commit/c3388f4))
+- **cli:** add possibility to pass files to lint ([17854eb](https://github.com/vidavidorra/global-linters/commit/17854eb))
+- **cli:** ignore files based on patterns described in an ignore path ([06e2332](https://github.com/vidavidorra/global-linters/commit/06e2332))
+
 ### [0.1.4](https://github.com/vidavidorra/global-linters/compare/v0.1.3...v0.1.4) (2019-10-01)
 
 ### Bug Fixes
